@@ -9,13 +9,13 @@ import axios from 'axios'
 
 export default {
   name: 'Ping',
-  data () {
+  data() {
     return {
-      msg: 'Welcome to Your Vue-Flask web App'
+      msg: ''
     }
   },
   methods: {
-     getMessage () {
+    getMessage () {
       const path = 'http://localhost:5000/api/ping'
       axios.get(path)
         .then((res) => {
