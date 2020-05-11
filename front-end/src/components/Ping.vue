@@ -1,6 +1,6 @@
 <template>
   <div class="Ping">
-    {{msg}}
+    <el-button type="primary">{{msg}}</el-button>
   </div>
 </template>
 
