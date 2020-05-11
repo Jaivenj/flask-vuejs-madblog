@@ -2,13 +2,15 @@
   <div style=" padding-top:40px">
     <el-container>
       <el-header>
-        <div>
-          <el-alert title="alert消息测试" type="info" show-icon></el-alert>    
-        </div>
-   
+        <alert 
+          v-if="sharedState.is_new"
+          v-bind:variant="alertVariant"
+          v-bind:message="alertMessage">
+        </alert>
+         <h1>Sign In</h1>
       </el-header>
       <el-main>
-          <h1>Sign In</h1>
+         
         <el-row :gutter="24">
           <el-col :span="8">
             <div class="grid-content bg-purple"></div>
@@ -55,8 +57,8 @@
                     <router-link to="/register" tag="span">注册</router-link>
                   </el-button>
                   <p>
-                    Forgot Your Password?
-                    <a href="#">Click to Reset It</a>
+                    Forgot Your Password?    
+                    <a href="#">  Click to Reset It</a>
                   </p>
                 </el-form-item>
               </el-form>
@@ -67,13 +69,17 @@
           </el-col>
         </el-row>
       </el-main>
-      <el-footer></el-footer>
+      <el-footer>
+        <p>Hello Guys ! (◕ᴗ◕✿)</p>
+        <p>This is a test program for Javen</p>
+        </el-footer>
     </el-container>
   </div>
 </template>
 
 <script>
 import axios from "axios"
+import Alert from './Alert'
 import store from "../store.js"
 export default {
   name: "Login", //this is the name of the component

@@ -1,11 +1,17 @@
 <template>
-  <div >
-    <el-alert title={{ message }} type="info" show-icon ></el-alert>
+  <div>
+    <el-alert 
+    title="消息" 
+    type="info" 
+    show-icon v-bind:type="variant"
+    >{{message}}</el-alert>
   </div>
 </template>
 
 <script>
-export default {
-  props: [ "message"]
-};
+  export default {
+    name: 'Alert',
+    props: ['variant', "message"]
+  };
+
 </script>

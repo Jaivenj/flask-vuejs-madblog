@@ -5,7 +5,6 @@ import Login from '@/components/Login'
 import Register from '@/components/Register'
 import Profile from '@/components/Profile'
 import Ping from '@/components/Ping'
-
 Vue.use(Router)
 
 const router = new Router({

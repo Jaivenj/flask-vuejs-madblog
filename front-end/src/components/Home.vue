@@ -6,7 +6,8 @@
       v-bind:variant="alert.alertVariant"
       v-bind:message="alert.alertMessage">
     </alert>
-    <button type="button" class="btn btn-primary">HomePage</button>
+    
+   
   </div>
 </template>
 
@@ -23,17 +24,17 @@ export default {
       alerts: [
         {
           showAlert: true,
-          //alertVariant: 'danger',
+          alertVariant: 'error',
           alertMessage: 0
         },
         {
           showAlert: true,
-          //alertVariant: 'info',
+          alertVariant: 'info',
           alertMessage: 1
         },
         {
           showAlert: true,
-          //alertVariant: 'dark',
+          alertVariant: 'warning',
           alertMessage: 2
         }
       ]
