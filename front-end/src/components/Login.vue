@@ -2,15 +2,10 @@
   <div style=" padding-top:40px">
     <el-container>
       <el-header>
-        <alert 
-          v-if="sharedState.is_new"
-          v-bind:variant="alertVariant"
-          v-bind:message="alertMessage">
-        </alert>
-         <h1>Sign In</h1>
+        <alert v-if="sharedState.is_new" v-bind:variant="info" v-bind:message="alertMessage"></alert>
+        <h1>Sign In</h1>
       </el-header>
       <el-main>
-         
         <el-row :gutter="24">
           <el-col :span="8">
             <div class="grid-content bg-purple"></div>
@@ -20,7 +15,6 @@
               <el-form
                 :model="loginForm"
                 status-icon
-                :rules="rules"
                 ref="loginForm"
                 label-width="100px"
                 class="demo-ruleForm"
@@ -53,12 +47,12 @@
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="onSubmit">登录</el-button>
-                  <el-button>
-                    <router-link to="/register" tag="span">注册</router-link>
-                  </el-button>
+                  <router-link to="/register" tag="span">
+                    <el-button>注册</el-button>
+                  </router-link>
                   <p>
-                    Forgot Your Password?    
-                    <a href="#">  Click to Reset It</a>
+                    Forgot Your Password?
+                    <a href="#">Click to Reset It</a>
                   </p>
                 </el-form-item>
               </el-form>
@@ -72,20 +66,18 @@
       <el-footer>
         <p>Hello Guys ! (◕ᴗ◕✿)</p>
         <p>This is a test program for Javen</p>
-        </el-footer>
+      </el-footer>
     </el-container>
   </div>
 </template>
 
 <script>
-import axios from "axios"
-import Alert from './Alert'
-import store from "../store.js"
+import axios from "axios";
+import Alert from "./Alert";
+import store from "../store.js";
 export default {
   name: "Login", //this is the name of the component
-  components: {
-   
-  },
+  components: {},
   data() {
     return {
       sharedState: store.state,
@@ -137,12 +129,13 @@ export default {
         .then(response => {
           // handle success
           window.localStorage.setItem("madblog-token", response.data.token);
-          store.resetNotNewAction();
           store.loginAction();
+          const name = JSON.parse(atob(response.data.token.split(".")[1])).name;
+          this.$toasted.success(`Welcome ${name}!`, { icon: "fingerprint" });
           if (typeof this.$route.query.redirect == "undefined") {
-            this.$router.push("/");
           } else {
-            this.$router.push(this.$route.query.redirect);
+            //this.$router.push(this.$route.query.redirect);
+            this.$router.push("/");
           }
         })
         .catch(error => {

@@ -1,5 +1,5 @@
 import re
-from flask import request, jsonify, url_for
+from flask import request, jsonify, url_for, g
 from app import db
 from app.api import bp
 from app.api.auth import token_auth
@@ -10,7 +10,7 @@ from app.models import User
 @bp.route('/users', methods=['POST'])
 def create_user():
     '''注册一个新用户'''
-    data = request.get_json(force=True)
+    data = request.get_json()
     if not data:
         return bad_request('You must post JSON data.')
 
@@ -50,10 +50,14 @@ def get_users():
     data = User.to_collection_dict(User.query, page, per_page, 'api.get_users')
     return jsonify(data)
 
+
 @bp.route('/users/<int:id>', methods=['GET'])
 @token_auth.login_required
 def get_user(id):
     '''返回一个用户'''
+    user = User.query.get_or_404(id)
+    if g.current_user == user:
+        return jsonify(User.query.get_or_404(id).to_dict(include_email=True))
     return jsonify(User.query.get_or_404(id).to_dict())
 
 
@@ -89,8 +93,8 @@ def update_user(id):
     return jsonify(user.to_dict())
 
 
-    @bp.route('/users/<int:id>', methods=['DELETE'])
-    @token_auth.login_required
-    def delete_user(id):
-        '''删除一个用户'''
-        pass
+@bp.route('/users/<int:id>', methods=['DELETE'])
+@token_auth.login_required
+def delete_user(id):
+    '''删除一个用户'''
+    pass

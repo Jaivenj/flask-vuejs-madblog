@@ -6,7 +6,7 @@
       v-bind:variant="alert.alertVariant"
       v-bind:message="alert.alertMessage">
     </alert>
-    
+    <el-button type="primary">Homepage</el-button>
    
   </div>
 </template>
