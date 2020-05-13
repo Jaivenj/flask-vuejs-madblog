@@ -33,18 +33,17 @@
           <el-menu-item index="5" style="float:right">
             <router-link
               v-bind:to="{ name: 'Profile', params: { id: sharedState.user_id }}"
-              class="nav-link"
             >Profile</router-link>
           </el-menu-item>
           <el-menu-item index="6" style="float:right">Messages</el-menu-item>
         </template>
-        
-        <template v-else >        
-        <el-menu-item index="8" style="float:right" >
-          <el-link :underline="false" href="/Login" type="primary">
-            <el-button type="primary">登录</el-button>
-          </el-link>
-        </el-menu-item>
+
+        <template v-else>
+          <el-menu-item index="8" style="float:right">
+            <el-link :underline="false" href="/Login" type="primary">
+              <el-button type="primary">登录</el-button>
+            </el-link>
+          </el-menu-item>
         </template>
       </el-menu>
     </el-header>
@@ -69,3 +68,13 @@ export default {
   }
 };
 </script>
+
+<style>
+a {
+  text-decoration: none;
+}
+
+.router-link-active {
+  text-decoration: none;
+}
+</style>
