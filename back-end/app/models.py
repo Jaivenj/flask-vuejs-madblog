@@ -4,6 +4,8 @@ import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import url_for, current_app
 from app import db
+import json
+from time import time
 
 
 class PaginatedAPIMixin(object):
@@ -94,6 +96,7 @@ class User(PaginatedAPIMixin, db.Model):
         payload = {
             'user_id': self.id,
             'name': self.name if self.name else self.username,
+            'user_name': self.name if self.name else self.username,
             'exp': now + timedelta(seconds=expires_in),
             'iat': now
         }
@@ -116,6 +119,7 @@ class User(PaginatedAPIMixin, db.Model):
 
 class Post(PaginatedAPIMixin, db.Model):
     __tablename__ = 'posts'
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     summary = db.Column(db.Text)
@@ -126,3 +130,20 @@ class Post(PaginatedAPIMixin, db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.title)
+
+    def from_dict(self, data):
+        for field in ['title', 'summary', 'body', 'timestamp', 'views']:
+            if field in data:
+                setattr(self, field, data[field])
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'title': self.title,
+            'summary': self.summary,
+            'body': self.body,
+            'timestamp': self.timestamp,
+            'views': self.views,
+
+        }
+        return data
