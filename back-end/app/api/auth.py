@@ -4,8 +4,15 @@ from app.models import User
 from app.api.errors import error_response
 from app.models import User
 from app import db
+<<<<<<< HEAD
 basic_auth = HTTPBasicAuth()
 token_auth = HTTPTokenAuth()
+=======
+
+basic_auth = HTTPBasicAuth()
+token_auth = HTTPTokenAuth()
+
+>>>>>>> origin
 @basic_auth.verify_password
 def verify_password(username, password):
     '''用于检查用户提供的用户名和密码'''
