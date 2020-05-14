@@ -35,7 +35,7 @@ class User(PaginatedAPIMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
+    email = db.Column(db.String(1e, unique=True)
     password_hash = db.Column(db.String(128))  # 不保存原始密码
     name = db.Column(db.String(64))
     location = db.Column(db.String(64))
