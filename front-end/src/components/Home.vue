@@ -1,7 +1,6 @@
 <template>
   <div>
     <!--  新增时输入 -->
-
     <el-container style="padding:10px">
       <el-aside width="200px">Aside</el-aside>
       <el-container>
