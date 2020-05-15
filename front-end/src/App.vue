@@ -1,25 +1,29 @@
 <template>
   <div id="app">
     <navbar></navbar>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
 <script>
-import Navbar from './components/Navbar'
+import Navbar from "./components/Navbar";
 export default {
-  name: 'App',
+  name: "App",
   components: {
     navbar: Navbar
   }
-}
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  text-align: center;
+  width: 70%;
+
+  margin: 0 auto;
 }
 </style>
