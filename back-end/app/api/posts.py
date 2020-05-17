@@ -77,7 +77,6 @@ def update_post(id):
     post.from_dict(data)
     db.session.commit()
     return jsonify(post.to_dict())
-    pass
 
 @bp.route('/posts/<int:id>', methods=['DELETE'])
 @token_auth.login_required

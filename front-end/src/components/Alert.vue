@@ -3,7 +3,7 @@
     <el-alert 
     title="消息" 
     type="info" 
-    show-icon v-bind:type="variant"
+    show-icon v-bind:type='variant'
     >{{message}}</el-alert>
   </div>
 </template>

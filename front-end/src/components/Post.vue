@@ -1,20 +1,14 @@
 <template>
   <div style="padding:20px">
+
     <el-container class="border">
       <el-aside width="200px">
         <div class="block">
-          <router-link
-            v-bind:to="{ path: `/user/${post.author.id}` }"
-            v-bind:title="post.author.name || post.author.username"
-          >
+          <router-link v-bind:to="{ path: `/user/${post.author.id}` }"
+            v-bind:title="post.author.name || post.author.username">
             <div>
-              <el-avatar
-                shape="circle"
-                :size="70"
-                :fit="fit"
-                :src="post.author._links.avatar"
-                class="Circle"
-              ></el-avatar>
+              <el-avatar shape="circle" :size="70" :src="post.author._links.avatar" class="Circle">
+              </el-avatar>
             </div>
           </router-link>
         </div>
@@ -51,72 +45,102 @@
           <div class="el-icon-chat-round" style="padding-right:20px;width:40px">
             <span style="padding-left:5px">1</span>
           </div>
-        
-            <el-button type="primary" style="float:right" size="small">阅读全文 </el-button>
-         
+          <el-row :gutter="10" style="float:right">
+            <el-col :span="2.5" v-if="post.author.id == sharedState.user_id">
+              <div class="grid-content bg-purple">
+                <!--编辑按键-->
+                <el-button type="primary" size="small" plain @click="$emit('edit-post')">编辑
+                </el-button>
+                <!--弹框-->
+              </div>
+            </el-col>
+            <el-col :span="2.5" v-if="post.author.id == sharedState.user_id">
+              <div class="grid-content bg-purple">
+                <el-button type="danger" size="small" plain v-on:click="$emit('delete-post')">删除 </el-button>
+              </div>
+            </el-col>
+            <el-col :span="2.5">
+              <router-link class="grid-content bg-purple" v-bind:to="{ name: 'PostDetail', params: { id: post.id } }">
+                <el-button type="success" size="small" plain>阅读文本 </el-button>
+              </router-link>
+            </el-col>
+
+          </el-row>
         </el-footer>
       </el-container>
     </el-container>
+
+
   </div>
+
+
+
 </template>
 <script>
-import store from "../store";
-import VueMarkdown from "vue-markdown";
-export default {
-  name: "Post",
-  post: {},
-  props: ["post"],
-  components: {
-    VueMarkdown
-  },
-  data() {
-    return {
-      sharedState: store.state
-    };
-  },
-  methods: {
-    getPost(id) {
-      const path = `/api/posts/${id}`;
-      this.$axios
-        .get(path)
-        .then(response => {
-          this.post = response.data;
-          console.log("getPost (id):>", this.post);
-        })
-        .catch(error => {
-          // eslint-disable-next-line
-          console.error(error);
-        });
-    }
-  }
-};
+  import {
+    quillEditor
+  } from "vue-quill-editor"; //调用编辑器
+  import "quill/dist/quill.core.css";
+  import "quill/dist/quill.snow.css";
+  import "quill/dist/quill.bubble.css";
+  import store from "../store";
+  import VueMarkdown from "vue-markdown";
+  export default {
+    name: "Post",
+    props: ["post"],
+
+    components: {
+      VueMarkdown,
+      quillEditor,
+    },
+    data() {
+      return {
+        sharedState: store.state,
+        dialogFormVisible: false,
+      };
+    },
+    methods: {
+
+
+    },
+
+  };
+
 </script>
-<style >
-.border {
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.2);
-  padding: 10px;
-}
-.Circle {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-}
-.el-header,
-.el-footer {
-  color: #333;
-  text-align: left;
-  line-height: 15px;
-}
+<style>
+  .border {
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+  }
 
-.el-aside {
-  color: #333;
-  text-align: right;
-  line-height: 0px;
-  padding-right: 20px;
-}
+  .Circle {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+  }
 
-.el-main {
-  color: #333;
-  text-align: left;
-  line-height: 30px;
-}
+  .el-header,
+  .el-footer {
+    color: #333;
+    text-align: left;
+    line-height: 15px;
+  }
+
+  .el-aside {
+    color: #333;
+    text-align: right;
+    line-height: 0px;
+    padding-right: 20px;
+  }
+
+  .el-main {
+    color: #333;
+    text-align: left;
+    line-height: 30px;
+  }
+
+  .quill-editor {
+    height: 150px;
+    padding-bottom: 100px
+  }
+
 </style>
