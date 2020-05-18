@@ -1,7 +1,7 @@
 <template>
   <div style="padding:10px">
 
-    <el-container class="border">
+    <el-container class="Border">
       <el-aside width="150px">
         <div class="block">
           <router-link v-bind:to="{ path: `/user/${post.author.id}` }"
@@ -69,8 +69,6 @@
         </el-footer>
       </el-container>
     </el-container>
-
-
   </div>
 
 
@@ -109,7 +107,7 @@ import PostDetail from "./PostDetail"
 
 </script>
 <style>
-  .border {
+  .Border {
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.2);
     padding: 10px;
