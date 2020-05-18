@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <el-container>
+  <div >
+    <el-container class="container">
       <el-header class="border">
         <H1>个人信息</H1>
       </el-header>

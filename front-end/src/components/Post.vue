@@ -1,8 +1,8 @@
 <template>
-  <div style="padding:20px">
+  <div style="padding:10px">
 
     <el-container class="border">
-      <el-aside width="200px">
+      <el-aside width="150px">
         <div class="block">
           <router-link v-bind:to="{ path: `/user/${post.author.id}` }"
             v-bind:title="post.author.name || post.author.username">
@@ -16,23 +16,23 @@
       <el-container>
         <el-header>
           <div style="float:left">
-            <h4>
+            <h5>
               <router-link v-bind:to="{ path: `/user/${post.author.id}` }">
                 <font color="#72c02c">{{ post.author.name || post.author.username }}</font>
               </router-link>
-              <span class="h6">
+              <span class="h5">
                 发布了文章
                 <router-link v-bind:to="{ name: 'PostDetail', params: { id: post.id } }">
                   <font color="#72c02c">《{{ post.title }}》</font>
                 </router-link>
               </span>
-            </h4>
-            <span>{{ $moment(post.timestamp).format('YYYY年MM月DD日 HH:mm:ss') }}</span>
+            </h5>
+            <span style="font-size:10px">{{ $moment(post.timestamp).format('YYYY年MM月DD日 HH:mm:ss') }}</span>
           </div>
         </el-header>
 
         <el-main>
-          <vue-markdown :source="post.summary" style="float:left;font-size:22px"></vue-markdown>
+          <vue-markdown :source="post.summary" style="float:left;font-size:15px"></vue-markdown>
         </el-main>
 
         <el-footer>
@@ -77,6 +77,7 @@
 
 </template>
 <script>
+import PostDetail from "./PostDetail"
   import {
     quillEditor
   } from "vue-quill-editor"; //调用编辑器
@@ -96,7 +97,7 @@
     data() {
       return {
         sharedState: store.state,
-        dialogFormVisible: false,
+        
       };
     },
     methods: {
@@ -112,6 +113,7 @@
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.2);
     padding: 10px;
+
   }
 
   .Circle {
@@ -122,7 +124,7 @@
   .el-footer {
     color: #333;
     text-align: left;
-    line-height: 15px;
+    line-height: 0px;
   }
 
   .el-aside {
@@ -135,7 +137,7 @@
   .el-main {
     color: #333;
     text-align: left;
-    line-height: 30px;
+    line-height: 20px;
   }
 
   .quill-editor {

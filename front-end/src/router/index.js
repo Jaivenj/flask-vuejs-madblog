@@ -6,6 +6,8 @@ import Register from '@/components/Register'
 import Profile from '@/components/Profile'
 import EditProfile from '@/components/EditProfile'
 import Ping from '@/components/Ping'
+import PostDetail from '@/components/PostDetail'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -17,6 +19,12 @@ const router = new Router({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      // 博客文章详情页
+      path: '/post/:id',
+      name: 'PostDetail',
+      component: PostDetail
     },
     {
       path: '/login',
