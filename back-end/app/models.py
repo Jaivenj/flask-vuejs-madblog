@@ -5,6 +5,8 @@ from app import db
 from datetime import datetime, timedelta
 from hashlib import md5
 
+# 用于增删查改判断数据库的模块！
+
 class PaginatedAPIMixin(object):
     @staticmethod
     def to_collection_dict(query, page, per_page, endpoint, **kwargs):
@@ -31,6 +33,14 @@ class PaginatedAPIMixin(object):
         return data
 
 
+followers = db.Table(
+    'followers',
+    db.Column('follower_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('followed_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('timestamp', db.DateTime, default=datetime.utcnow)
+)
+
+
 class User(PaginatedAPIMixin, db.Model):
     # 设置数据库表名，Post模型中的外键 user_id 会引用 users.id
     __tablename__ = 'users'
@@ -47,6 +57,27 @@ class User(PaginatedAPIMixin, db.Model):
     # cascade 用于级联删除，当删除user时，该user下面的所有posts都会被级联删除
     posts = db.relationship('Post', backref='author', lazy='dynamic',
                             cascade='all, delete-orphan')
+
+    followeds = db.relationship(
+        'User', secondary=followers,
+        primaryjoin=(followers.c.follower_id == id),
+        secondaryjoin=(followers.c.followed_id == id),
+        backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+
+    def is_following(self, user):
+        '''判断当前用户是否已经关注了 user 这个用户对象，如果关注了，下面表达式左边是1，否则是0'''
+        return self.followeds.filter(
+            followers.c.followed_id == user.id).count() > 0
+
+    def follow(self, user):
+        '''当前用户开始关注 user 这个用户对象'''
+        if not self.is_following(user):
+            self.followeds.append(user)
+
+    def unfollow(self, user):
+        '''当前用户取消关注 user 这个用户对象'''
+        if self.is_following(user):
+            self.followeds.remove(user)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -139,7 +170,8 @@ class Post(PaginatedAPIMixin, db.Model):
         value: 监听哪个字段的变化
         '''
         if not target.summary:  # 如果前端不填写摘要，是空str，而不是None
-            target.summary = value[:200] + '  ... ...'  # 截取 body 字段的前200个字符给 summary
+            # 截取 body 字段的前200个字符给 summary
+            target.summary = value[:200] + '  ... ...'
 
     def to_dict(self):
         data = {
@@ -163,4 +195,5 @@ class Post(PaginatedAPIMixin, db.Model):
                 setattr(self, field, data[field])
 
 
-db.event.listen(Post.body, 'set', Post.on_changed_body)  # body 字段有变化时，执行 on_changed_body() 方法
+# body 字段有变化时，执行 on_changed_body() 方法
+db.event.listen(Post.body, 'set', Post.on_changed_body)

@@ -7,9 +7,17 @@
       <el-container class="border">
         <el-aside width="250px">
           <div class="block">
-            <el-avatar shape="circle" :size="200" v-bind:src="user._links.avatar"></el-avatar>
+            <el-avatar
+              v-if="user._links.avatar"
+              shape="circle"
+              :size="200"
+              v-bind:src="user._links.avatar"
+            ></el-avatar>
           </div>
-          <router-link v-if="$route.params.id == sharedState.user_id" v-bind:to="{ name: 'EditProfile' }">
+          <router-link
+            v-if="$route.params.id == sharedState.user_id"
+            v-bind:to="{ name: 'EditProfile' }"
+          >
             <el-button icon="el-icon-edit" type="primary" round>Edit Profile</el-button>
           </router-link>
         </el-aside>
@@ -58,110 +66,104 @@
         </el-main>
       </el-container>
     </el-container>
-
-  
-
   </div>
 </template>
 
 <script>
-  import store from "../store.js";
+import store from "../store.js";
 
-  export default {
-    name: "Profile", //this is the name of the component
-    data() {
-      return {
-        sharedState: store.state,
-        user: {
-          username: "",
-          email: "",
-          name: "",
-          location: "",
-          about_me: "",
-          member_since: "",
-          last_seen: "",
+export default {
+  name: "Profile", //this is the name of the component
+  data() {
+    return {
+      sharedState: store.state,
+      user: {
+        username: "",
+        email: "",
+        name: "",
+        location: "",
+        about_me: "",
+        member_since: "",
+        last_seen: "",
+        _links: {
+          self: "",
+          avatar: ""
         }
-      };
-    },
-    methods: {
-      getUser(id) {
-        const path = `/users/${id}`;
-        this.$axios
-          .get(path)
-          .then(response => {
-            this.user = response.data;
-          })
-          .catch(error => {
-            // eslint-disable-next-line
-            console.error(error);
-          });
       }
-    },
-    created() {
-      const user_id = this.$route.params.id;
-      this.getUser(user_id);
-    },
-    // 当 id 变化后重新加载数据
-    beforeRouteUpdate(to, from, next) {
-      this.getUser(to.params.id);
-      next();
+    };
+  },
+  methods: {
+    getUser(id) {
+      const path = `/users/${id}`;
+      this.$axios
+        .get(path)
+        .then(response => {
+          this.user = response.data;
+          console.log("this.user :>> ", this.user);
+        })
+        .catch(error => {
+          // eslint-disable-next-line
+          console.error(error);
+        });
     }
-  };
-
+  },
+  created() {
+    const user_id = this.$route.params.id;
+    this.getUser(user_id);
+  },
+  // 当 id 变化后重新加载数据
+  beforeRouteUpdate(to, from, next) {
+    this.getUser(to.params.id);
+    next();
+  }
+};
 </script>
 
 <style>
-  .el-header {
-    color: #333;
-    text-align: center;
-    line-height: 0px;
-  }
+.el-header {
+  color: #333;
+  text-align: center;
+  line-height: 0px;
+}
 
-  .el-aside {
-    color: #333;
-    text-align: center;
-    line-height: 50px;
-  }
+.el-aside {
+  color: #333;
+  text-align: center;
+  line-height: 50px;
+}
 
-  .el-main {
-    color: #333;
-    text-align: left;
-    line-height: 15px;
-  }
+.el-main {
+  color: #333;
+  text-align: left;
+  line-height: 15px;
+}
 
-  .Container {
-    padding: 50px 10% 200px 10%;
-  }
+.Container {
+  padding: 50px 10% 200px 10%;
+  width: 100%;
+  height: 100%;
+}
 
-  .border {
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.2);
-    padding: 10px;
-  }
+.border {
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+}
 
-  .el-row {
-    margin-bottom: 20px;
+.el-col {
+  border-radius: 4px;
+}
 
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
 
-  .el-col {
-    border-radius: 4px;
-  }
+.text {
+  font-size: 16px;
+}
 
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-  }
-
-  .text {
-    font-size: 16px;
-  }
-
-  .item {
-    margin-bottom: 18px;
-  }
-
+.item {
+  margin-bottom: 18px;
+}
 </style>

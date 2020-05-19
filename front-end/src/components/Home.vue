@@ -1,30 +1,11 @@
 <template>
   <div>
-    <el-dialog title="编辑文章" :show-close="false" :visible="dialogFormVisible" :modal="false">
-      <el-form :model="editForm">
-        <el-form-item label="Title" :label-width="formLabelWidth">
-          <el-input :value="editForm.title" v-model="editForm.title"></el-input>
-        </el-form-item>
-        <el-form-item label="Summary" :label-width="formLabelWidth">
-          <el-input :value="editForm.summary" v-model="editForm.summary"></el-input>
-        </el-form-item>
-        <el-form-item label="Body" :label-width="formLabelWidth">
-          <quill-editor ref="myQuillEditor" v-model="editForm.body" :value="editForm.body"></quill-editor>
-        </el-form-item>
-      </el-form>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible= false">取 消</el-button>
-        <el-button type="primary" @click="Update_form()">确 定</el-button>
-      </div>
-    </el-dialog>
-
     <div style="padding:10px">
       <!--  博客列表数目详情 -->
-      <div slot="header" class="clearfix" style="  background-color: #e9eef3;padding:15px 10px;">
+      <div slot="header" style="  background-color: #e9eef3;padding:15px 10px;">
         <span class="el-icon-document" style="float:left">
           <i>All Post</i>
-          <small>(共{{ posts._meta.total_items }}篇, {{ posts._meta.total_pages }}页)</small>
+          <small >(共{{ posts._meta.total_items }}篇, {{ posts._meta.total_pages }}页)</small>
         </span>
         <el-dropdown style="float:right" trigger="click">
           <span class="el-dropdown-link">
@@ -71,7 +52,7 @@
       :current-page.sync="Current_Page"
     ></el-pagination>
 
-    <div slot="header" class="clearfix">
+    <div slot="header" >
       <span>
         <el-input v-model="PostForm.Title" placeholder="标题" style="padding:10px"></el-input>
       </span>
@@ -96,6 +77,25 @@
       </div>
       <div v-html="str" class="ql-editor">{{str}}</div>
     </div>
+
+       <el-dialog title="编辑文章" :show-close="false" :visible="dialogFormVisible" :modal="false">
+      <el-form :model="editForm">
+        <el-form-item label="Title" :label-width="formLabelWidth">
+          <el-input :value="editForm.title" v-model="editForm.title"></el-input>
+        </el-form-item>
+        <el-form-item label="Summary" :label-width="formLabelWidth">
+          <el-input :value="editForm.summary" v-model="editForm.summary"></el-input>
+        </el-form-item>
+        <el-form-item label="Body" :label-width="formLabelWidth">
+          <quill-editor ref="myQuillEditor" v-model="editForm.body" :value="editForm.body"></quill-editor>
+        </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible= false">取 消</el-button>
+        <el-button type="primary" @click="Update_form()">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -348,82 +348,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.text {
-  font-size: 14px;
-}
-
-.item {
-  margin-bottom: 18px;
-}
-
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
-
-.clearfix:after {
-  clear: both;
-}
-
-.el-header,
-.el-footer {
-  color: #333;
-  text-align: center;
-  line-height: 0px;
-}
-
-.el-aside {
-  color: #333;
-  text-align: right;
-  line-height: 0px;
-  padding-right: 20px;
-}
-
-.el-main {
-  color: #333;
-  text-align: center;
-  line-height: 0px;
-}
-
-body > .el-container {
-  margin-bottom: 40px;
-}
-
-.el-container:nth-child(5) .el-aside,
-.el-container:nth-child(6) .el-aside {
-  line-height: 260px;
-}
-
-.el-container:nth-child(7) .el-aside {
-  line-height: 320px;
-}
-
-.text {
-  font-size: 14px;
-}
-
-.item {
-  margin-bottom: 18px;
-}
-
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
-
-.clearfix:after {
-  clear: both;
-}
-
-.box-card {
-  width: 480px;
-}
-
-body {
-  margin: 0;
-}
-</style>

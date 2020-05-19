@@ -1,5 +1,6 @@
 <template>
-  <div style="padding:10px">
+<div>
+  <div style= " padding:10px">
 
     <el-container class="Border">
       <el-aside width="150px">
@@ -27,7 +28,7 @@
                 </router-link>
               </span>
             </h5>
-            <span style="font-size:10px">{{ $moment(post.timestamp).format('YYYY年MM月DD日 HH:mm:ss') }}</span>
+            <P style="font-size:10px">{{ $moment(post.timestamp).format('YYYY年MM月DD日 HH:mm:ss') }}</P>
           </div>
         </el-header>
 
@@ -70,8 +71,7 @@
       </el-container>
     </el-container>
   </div>
-
-
+  </div>
 
 </template>
 <script>
@@ -95,8 +95,7 @@ import PostDetail from "./PostDetail"
     data() {
       return {
         sharedState: store.state,
-        
-      };
+      }; 
     },
     methods: {
 
@@ -110,8 +109,6 @@ import PostDetail from "./PostDetail"
   .Border {
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.2);
-    padding: 10px;
-
   }
 
   .Circle {

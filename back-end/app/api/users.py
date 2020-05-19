@@ -98,3 +98,37 @@ def update_user(id):
 def delete_user(id):
     '''删除一个用户'''
     pass
+
+
+@bp.route('/follow/<int:id>', methods=['GET'])
+@token_auth.login_required
+def follow(id):
+    '''开始关注一个用户'''
+    user = User.query.get_or_404(id)
+    if g.current_user == user:
+        return bad_request('You cannot follow yourself.')
+    if g.current_user.is_following(user):
+        return bad_request('You have already followed that user.')
+    g.current_user.follow(user)
+    db.session.commit()
+    return jsonify({
+        'status': 'success',
+        'message': 'You are now following %d.' % id
+    })
+
+
+@bp.route('/unfollow/<int:id>', methods=['GET'])
+@token_auth.login_required
+def unfollow(id):
+    '''取消关注一个用户'''
+    user = User.query.get_or_404(id)
+    if g.current_user == user:
+        return bad_request('You cannot unfollow yourself.')
+    if not g.current_user.is_following(user):
+        return bad_request('You are not following this user.')
+    g.current_user.unfollow(user)
+    db.session.commit()
+    return jsonify({
+        'status': 'success',
+        'message': 'You are not following %d anymore.' % id
+    })
