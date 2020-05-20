@@ -5,7 +5,7 @@
       <div slot="header" style="  background-color: #e9eef3;padding:15px 10px;">
         <span class="el-icon-document" style="float:left">
           <i>All Post</i>
-          <small >(共{{ posts._meta.total_items }}篇, {{ posts._meta.total_pages }}页)</small>
+          <small>(共{{ posts._meta.total_items }}篇, {{ posts._meta.total_pages }}页)</small>
         </span>
         <el-dropdown style="float:right" trigger="click">
           <span class="el-dropdown-link">
@@ -44,15 +44,12 @@
       layout="prev, pager, next"
       :total="posts._meta.total_items "
       :page-size="posts._meta.per_page"
-      v-on:page-count="posts._meta.total_pages"
       style="padding:10px;text-align: right"
-      @prev-click="Prev_click()"
-      @next-click="Next_click()"
       @current-change="Current_Change()"
       :current-page.sync="Current_Page"
     ></el-pagination>
 
-    <div slot="header" >
+    <div slot="header">
       <span>
         <el-input v-model="PostForm.Title" placeholder="标题" style="padding:10px"></el-input>
       </span>
@@ -78,7 +75,7 @@
       <div v-html="str" class="ql-editor">{{str}}</div>
     </div>
 
-       <el-dialog title="编辑文章" :show-close="false" :visible="dialogFormVisible" :modal="false">
+    <el-dialog title="编辑文章" :show-close="false" :visible="dialogFormVisible" :modal="true">
       <el-form :model="editForm">
         <el-form-item label="Title" :label-width="formLabelWidth">
           <el-input :value="editForm.title" v-model="editForm.title"></el-input>
@@ -87,7 +84,12 @@
           <el-input :value="editForm.summary" v-model="editForm.summary"></el-input>
         </el-form-item>
         <el-form-item label="Body" :label-width="formLabelWidth">
-          <quill-editor ref="myQuillEditor" v-model="editForm.body" :value="editForm.body"></quill-editor>
+          <quill-editor
+            ref="myQuillEditor"
+            v-model="editForm.body"
+            :value="editForm.body"
+            @focus="onEditorFocus($event)"
+          ></quill-editor>
         </el-form-item>
       </el-form>
 
@@ -121,7 +123,16 @@ export default {
       formLabelWidth: "120px",
       iter_pages: [], // 分页导航栏
       sharedState: store.state,
-      posts: {},
+      posts: {
+        items: {},
+        _meta: {
+          items_total: ""
+        },
+        _links: {
+          pre: "",
+          next: ""
+        }
+      },
       str: "",
       PostForm: {
         Title: "",
@@ -193,7 +204,7 @@ export default {
         }
       )
         .then(() => {
-          const path = `/posts/${post.id}`;
+          const path = `/posts/${this.post.id}`;
           this.$axios
             .delete(path)
             .then(response => {
@@ -229,25 +240,6 @@ export default {
         }
       });
     },
-    Prev_click() {
-      this.$router.push({
-        name: "Home",
-        query: {
-          page: this.posts._meta.page - 1,
-          per_page: this.posts._meta.per_page
-        }
-      });
-    },
-    Next_click() {
-      this.$router.push({
-        name: "Home",
-        query: {
-          page: this.posts._meta.page + 1,
-          per_page: this.posts._meta.per_page
-        }
-      });
-    },
-
     getPosts() {
       let page = 1;
       let per_page = 3;
@@ -274,9 +266,12 @@ export default {
     },
     onEditorReady(editor) {
       // 准备编辑器
+      console.log("onEditorReady :>> ");
     },
     onEditorBlur() {}, // 失去焦点事件
-    onEditorFocus() {}, // 获得焦点事件
+    onEditorFocus() {
+      console.log("object :>> ");
+    }, // 获得焦点事件
     onEditorChange() {}, // 内容改变事件
     // 转码
     escapeStringHTML(str) {
@@ -336,6 +331,7 @@ export default {
   mounted() {
     let content = ""; // 请求后台返回的内容字符串
     this.str = this.escapeStringHTML(content);
+
   },
   created() {
     this.getPosts();

@@ -79,6 +79,20 @@ class User(PaginatedAPIMixin, db.Model):
         if self.is_following(user):
             self.followeds.remove(user)
 
+    @property
+    def followed_posts(self):
+        '''获取当前用户的关注者的所有文章列表'''
+        followed = Post.query.join(
+            followers, (followers.c.followed_id == Post.author_id)).filter(
+                followers.c.follower_id == self.id)
+        # 包含当前用户自己的文章列表
+        # own = Post.query.filter_by(user_id=self.id)
+        # return followed.union(own).order_by(Post.timestamp.desc())
+        return followed.order_by(Post.timestamp.desc())
+
+
+
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
 

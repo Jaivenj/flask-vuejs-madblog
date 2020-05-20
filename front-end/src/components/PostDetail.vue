@@ -1,5 +1,31 @@
 <template>
   <div class="BODYA">
+    <!-- 编辑弹框 -->
+
+    <el-dialog title="编辑文章" :show-close="false" :visible="dialogFormVisible" :modal="true">
+      <el-form :model="editForm">
+        <el-form-item label="Title" label-width="120px">
+          <el-input :value="editForm.title" v-model="editForm.title"></el-input>
+        </el-form-item>
+        <el-form-item label="Summary" label-width="120px">
+          <el-input :value="editForm.summary" v-model="editForm.summary"></el-input>
+        </el-form-item>
+        <el-form-item label="Body" label-width="120px">
+          <quill-editor
+            ref="myQuillEditor"
+            v-model="editForm.body"
+            :value="editForm.body"
+            @focus="onEditorFocus($event)"
+          ></quill-editor>
+        </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible= false">取 消</el-button>
+        <el-button type="primary" @click="Update_form()">确 定</el-button>
+      </div>
+    </el-dialog>
+
     <el-container id="PostDetail">
       <el-header style="height:150px">
         <el-row>
@@ -11,13 +37,16 @@
         </el-row>
         <el-row :gutter="12">
           <el-col :span="1.5" class="grid-content" v-if="post.author.id == sharedState.user_id">
-            <el-button size="mini" type="warning" plain>编辑</el-button>
+            <el-button size="mini" type="warning" plain @click="onEditPost(post)">编辑</el-button>
           </el-col>
           <el-col :span="1.5" class="grid-content" v-if="post.author.id == sharedState.user_id">
-            <el-button size="mini" type="danger" plain>删除</el-button>
+            <el-button size="mini" type="danger" plain v-on:click="onDeletePost(post)">删除</el-button>
           </el-col>
           <el-col :span="1.5" class="grid-content">
-            <el-button size="mini" type="primary" plain>评论</el-button>
+            <el-button size="mini" type="primary" plain @click="OnEditorFocus">
+              <a href="#comment"></a>
+              评论
+            </el-button>
           </el-col>
           <el-col :span="1.5" class="grid-content">
             <div>
@@ -39,7 +68,7 @@
 
           <el-col :span="1.5" style="float:right;color:#777;" class="grid-content">
             <div class="el-icon-view">
-              <font size="2">无数次阅读，读到不想读</font>
+              <font size="2">{{ post.views }}</font>
             </div>
           </el-col>
         </el-row>
@@ -101,6 +130,12 @@
               <el-row>
                 <el-col :span="2" class="el-icon-edit-outline">赞</el-col>
                 <el-col :span="2" class="el-icon-edit-outline">回复</el-col>
+                <el-col :span="2" style="float:right">
+                  <el-button type="danger" plain="true" size="mini">删除</el-button>
+                </el-col>
+                <el-col :span="2" style="float:right">
+                  <el-button type="warning" plain="true" size="mini">屏蔽</el-button>
+                </el-col>
               </el-row>
             </div>
           </div>
@@ -129,6 +164,12 @@
               <el-row>
                 <el-col :span="2" class="el-icon-edit-outline">赞</el-col>
                 <el-col :span="2" class="el-icon-edit-outline">回复</el-col>
+                <el-col :span="2" style="float:right">
+                  <el-button type="danger" plain="true" size="mini">删除</el-button>
+                </el-col>
+                <el-col :span="2" style="float:right">
+                  <el-button type="warning" plain="true" size="mini">屏蔽</el-button>
+                </el-col>
               </el-row>
             </div>
           </div>
@@ -136,14 +177,18 @@
       </el-container>
     </div>
 
-    <div>
+    <div ref="comment" id="comment">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span style="float:left">Comments</span>
           <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
         </div>
         <div class="text item">
-          <quill-editor ref="myQuillEditor" style="height:150px;padding-bottom:50px"></quill-editor>
+          <quill-editor
+            ref="myQuillEditor"
+            style="height:150px;padding-bottom:50px"
+            @focus="onEditorFocus($event)"
+          ></quill-editor>
         </div>
         <div style="float:left;padding:20px">
           <el-button>Cancle</el-button>
@@ -170,9 +215,20 @@ export default {
   },
   data() {
     return {
+      focusStatus: false,
+      Author_ID: "",
       sharedState: store.state,
-      post: {},
-      str:"",
+      dialogFormVisible: false,
+      post: {
+        author: { id: "", _links: { avatar: "" } },
+        body: "",
+        id: "",
+        summary: "",
+        title: "",
+        view: "",
+        _links: {}
+      },
+      str: "",
       editForm: {
         title: "",
         summary: "",
@@ -184,13 +240,107 @@ export default {
     };
   },
   methods: {
+    onEditorFocus() {
+      this.editForm.body = " asd";
+
+      this.$nextTick(function() {
+        this.$refs.myQuillEditor.quill.enable(true);
+        this.$refs.myQuillEditor.quill.blur();
+      });
+
+      console.log("object :>> ", this.editForm.body);
+    },
+    OnEditorFocus() {
+      this.onEditorFocus();
+    },
+    Update_form() {
+      //   let loadingInstance = Loading.service("body");
+      //   console.log("loading", this.loading);
+      const path = `/posts/${this.editForm.id}`;
+      const payload = {
+        title: this.editForm.title,
+        summary: this.editForm.summary,
+        body: this.editForm.body
+      };
+      this.$axios
+        .put(path, payload)
+        .then(response => {
+          // handle success
+
+          this.getPost(this.editForm.id);
+          this.dialogFormVisible = false;
+
+          this.$toasted.success("Congratulations, you are posting a article !");
+          console.log("response :", response.data);
+          this.editForm.title = "";
+          this.editForm.summary = "";
+          this.editForm.body = "";
+          //   this.$nextTick(() => {
+          //     // 以服务的方式调用的 Loading 需要异步关闭
+          //     loadingInstance.close();
+          //   });
+        })
+        .catch(error => {
+          // handle error
+          console.log("error:", error);
+        });
+    },
+    onEditPost(post) {
+      this.dialogFormVisible = true;
+      // 不要使用对象引用赋值： this.editForm = post
+      // 这样是同一个 post 对象，用户在 editform 中的操作会双向绑定到该 post 上， 你会看到 modal 下面的博客也在变
+      // 如果用户修改了一些数据，但是点了 cancel，你就必须在 onResetUpdate() 中重新加载一次博客列表，不然用户会看到修改后但未提交的不对称信息
+      this.editForm = Object.assign({}, post);
+    },
+    onDeletePost(post) {
+      this.$confirm(
+        `此操作将永久删除文章《${this.post.title}》, 是否继续?`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+          showClose: true
+        }
+      )
+        .then(() => {
+          const path = `/posts/${this.post.id}`;
+          this.$axios
+            .delete(path)
+            .then(response => {
+              // handle success
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              if (typeof this.$route.query.redirect == "undefined") {
+                this.$router.push("/");
+              } else {
+                this.$router.push(this.$route.query.redirect);
+              }
+            })
+            .catch(error => {
+              // handle error
+              console.log(error.response.data);
+              this.$toasted.error(error.response.data.message, {
+                icon: "fingerprint"
+              });
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
     escapeStringHTML(str) {
       str = str.replace(/&lt;/g, "<");
       str = str.replace(/&gt;/g, ">");
       return str;
     },
-    getPost(id) {
-      const path = `/posts/${id}`;
+    getPost(Author_ID) {
+      const path = `/posts/${Author_ID}`;
       this.$axios
         .get(path)
         .then(response => {
@@ -203,9 +353,27 @@ export default {
         });
     }
   },
+  mounted() {
+    this.$refs.myQuillEditor.quill.enable(false);
+    console.log("this.$refs.myQuillEditor.quill.enable :>> ");
+  },
   created() {
     const post_id = this.$route.params.id;
     this.getPost(post_id);
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.getPost(to.params.id);
+    console.log("to.params.id :>> ", to.params.id);
+    next();
+  },
+  directives: {
+    focus: {
+      inserted: function(el, { value }) {
+        if (value) {
+          el.focus();
+        }
+      }
+    }
   }
 };
 </script>
