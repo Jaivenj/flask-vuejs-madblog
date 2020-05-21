@@ -77,7 +77,7 @@ const router = new Router({
           component: Overview
         },
         {
-          path: '/overview',
+          path: 'overview',
           name: 'Overview',
           component: Overview
         },
@@ -85,7 +85,7 @@ const router = new Router({
         // Followers will be rendered inside User's <router-view>
         // when /user/:id/followers is matched
         {
-          path: '/followers',
+          path: 'followers',
           name: 'Followers',
           component: Followers
         },
@@ -93,7 +93,7 @@ const router = new Router({
         // Following will be rendered inside User's <router-view>
         // when /user/:id/following is matched
         {
-          path: '/following',
+          path: 'following',
           name: 'Following',
           component: Following
         },
@@ -101,12 +101,12 @@ const router = new Router({
         // UserPosts will be rendered inside User's <router-view>
         // when /user/:id/posts is matched
         {
-          path: '/posts',
+          path: 'posts',
           name: 'Posts',
           component: Posts
         },
         {
-          path: '/followeds-posts',
+          path: 'followeds-posts',
           name: 'UserPostsList',
           component: UserPostsList
         }
