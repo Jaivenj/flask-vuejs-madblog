@@ -32,7 +32,7 @@
           </el-menu-item>
           <el-menu-item index="5" style="float:right">
             <router-link
-              v-bind:to="{ name: 'Profile', params: { id: sharedState.user_id }}"
+              v-bind:to="{ name: 'User', params: { id: sharedState.user_id }}"
             >Profile</router-link>
           </el-menu-item>
           <el-menu-item index="6" style="float:right">Messages</el-menu-item>

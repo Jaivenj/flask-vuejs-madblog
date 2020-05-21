@@ -331,7 +331,6 @@ export default {
   mounted() {
     let content = ""; // 请求后台返回的内容字符串
     this.str = this.escapeStringHTML(content);
-
   },
   created() {
     this.getPosts();

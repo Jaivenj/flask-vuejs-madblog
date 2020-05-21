@@ -1,10 +1,10 @@
 <template>
-   <div><h1>HI UserFollowedsPostsList</h1></div>
+   <div><h1>HI Followers</h1></div>
 </template>
 
 <script>
 export default {
-    name:"UserPostsList"
+name:"Followers",
 }
 </script>
 

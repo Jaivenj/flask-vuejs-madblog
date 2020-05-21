@@ -53,11 +53,13 @@
               <router-link
                 v-bind:to="{ path: `/user/${post.author.id}` }"
                 style="color:#777;"
-              >{{post.author.username}}</router-link>/
+              >{{post.author.username}}</router-link>
+                <el-divider direction="vertical"></el-divider>
             </div>
           </el-col>
           <el-col :span="1.5">
-            <div style="color:#777;  ">{{ $moment(post.timestamp).format('LLL') }} /</div>
+            <div style="color:#777;  ">{{ $moment(post.timestamp).format('LLL') }}   <el-divider direction="vertical"></el-divider> </div>
+            
           </el-col>
 
           <el-col :span="1.5" class="grid-content">
@@ -68,7 +70,7 @@
 
           <el-col :span="1.5" style="float:right;color:#777;" class="grid-content">
             <div class="el-icon-view">
-              <font size="2">{{ post.views }}</font>
+              <font size="2">{{ post.views }}次阅读</font>
             </div>
           </el-col>
         </el-row>
@@ -131,10 +133,13 @@
                 <el-col :span="2" class="el-icon-edit-outline">赞</el-col>
                 <el-col :span="2" class="el-icon-edit-outline">回复</el-col>
                 <el-col :span="2" style="float:right">
-                  <el-button type="danger" plain="true" size="mini">删除</el-button>
+                  <el-button type="danger" plain size="mini">删除</el-button>
                 </el-col>
                 <el-col :span="2" style="float:right">
-                  <el-button type="warning" plain="true" size="mini">屏蔽</el-button>
+                  <el-button type="warning" plain size="mini">屏蔽</el-button>
+                </el-col>
+                <el-col :span="2" style="float:right">
+                  <el-button type="warning" plain size="mini">恢复</el-button>
                 </el-col>
               </el-row>
             </div>
@@ -165,10 +170,13 @@
                 <el-col :span="2" class="el-icon-edit-outline">赞</el-col>
                 <el-col :span="2" class="el-icon-edit-outline">回复</el-col>
                 <el-col :span="2" style="float:right">
-                  <el-button type="danger" plain="true" size="mini">删除</el-button>
+                  <el-button type="danger" plain size="mini">删除</el-button>
                 </el-col>
                 <el-col :span="2" style="float:right">
-                  <el-button type="warning" plain="true" size="mini">屏蔽</el-button>
+                  <el-button type="warning" plain size="mini">屏蔽</el-button>
+                </el-col>
+                <el-col :span="2" style="float:right">
+                  <el-button type="warning" plain size="mini">恢复</el-button>
                 </el-col>
               </el-row>
             </div>
@@ -185,7 +193,7 @@
         </div>
         <div class="text item">
           <quill-editor
-            ref="myQuillEditor"
+            ref="C_myQuillEditor"
             style="height:150px;padding-bottom:50px"
             @focus="onEditorFocus($event)"
           ></quill-editor>
@@ -241,11 +249,9 @@ export default {
   },
   methods: {
     onEditorFocus() {
-      this.editForm.body = " asd";
-
       this.$nextTick(function() {
-        this.$refs.myQuillEditor.quill.enable(true);
-        this.$refs.myQuillEditor.quill.blur();
+        // this.$refs.C_myQuillEditor.quill.enable(true);
+        // this.$refs.C_myQuillEditor.quill.blur();
       });
 
       console.log("object :>> ", this.editForm.body);
@@ -353,10 +359,7 @@ export default {
         });
     }
   },
-  mounted() {
-    this.$refs.myQuillEditor.quill.enable(false);
-    console.log("this.$refs.myQuillEditor.quill.enable :>> ");
-  },
+  mounted() {},
   created() {
     const post_id = this.$route.params.id;
     this.getPost(post_id);

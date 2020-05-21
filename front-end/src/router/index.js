@@ -7,12 +7,18 @@ import Profile from '@/components/Profile'
 import EditProfile from '@/components/EditProfile'
 import Ping from '@/components/Ping'
 import PostDetail from '@/components/PostDetail'
+import User from '@/components/User'
+import Overview from '@/components/Overview'
+import Followers from '@/components/Followers'
+import Following from '@/components/Following'
+import Posts from '@/components/Posts'
+import UserPostsList from '@/components/UserPostsList'
+
 
 Vue.use(Router)
 
 const router = new Router({
-  routes: [
-    {
+  routes: [{
       path: '/',
       name: 'Home',
       component: Home,
@@ -60,12 +66,55 @@ const router = new Router({
     },
     {
       path: '/user/:id',
-      name: 'Profile',
-      component: Profile,
+      name: 'User',
+      component: User,
+      children: [
+        // Overview will be rendered inside User's <router-view>
+        // when /user/:id is matched
+        // 注意： 要有默认子路由，父路由不能指定 name
+        {
+          path: '',
+          component: Overview
+        },
+        {
+          path: '/overview',
+          name: 'Overview',
+          component: Overview
+        },
+
+        // Followers will be rendered inside User's <router-view>
+        // when /user/:id/followers is matched
+        {
+          path: '/followers',
+          name: 'Followers',
+          component: Followers
+        },
+
+        // Following will be rendered inside User's <router-view>
+        // when /user/:id/following is matched
+        {
+          path: '/following',
+          name: 'Following',
+          component: Following
+        },
+
+        // UserPosts will be rendered inside User's <router-view>
+        // when /user/:id/posts is matched
+        {
+          path: '/posts',
+          name: 'Posts',
+          component: Posts
+        },
+        {
+          path: '/followeds-posts',
+          name: 'UserPostsList',
+          component: UserPostsList
+        }
+      ],
       meta: {
         requiresAuth: true
       }
-    }
+    },
   ]
 })
 
@@ -74,17 +123,21 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth) && (!token || token === null)) {
     next({
       path: '/login',
-      query: { redirect: to.fullPath }
+      query: {
+        redirect: to.fullPath
+      }
     })
   } else if (token && to.name == 'Login') {
     // 用户已登录，但又去访问登录页面时不让他过去
     next({
       path: from.fullPath
     })
-  } else if (to.matched.length === 0) {  // 要前往的路由不存在时
+  } else if (to.matched.length === 0) { // 要前往的路由不存在时
     console.log('here')
     console.log(to.matched)
-    Vue.toasted.error('404: NOT FOUND', { icon: 'fingerprint' })
+    Vue.toasted.error('404: NOT FOUND', {
+      icon: 'fingerprint'
+    })
     if (from.name) {
       next({
         name: from.name
