@@ -3,16 +3,17 @@
     <el-container>
       <el-header>
         <alert v-if="sharedState.is_new" v-bind:variant="info" v-bind:message="alertMessage"></alert>
-        <h1>Sign In</h1>
+        <h1 style="text-align:center;padding-left:70px">Sign In</h1>
       </el-header>
-      <el-main>
+      <el-main style="text-align:center" width="500px">
         <el-row :gutter="24">
           <el-col :span="8">
             <div class="grid-content bg-purple"></div>
           </el-col>
-          <el-col :span="8">
-            <div class="grid-content bg-purple">
+          <el-col :span="8" >
+            <div class="grid-content bg-purple"   >
               <el-form
+            
                 :model="loginForm"
                 status-icon
                 ref="loginForm"
@@ -21,6 +22,7 @@
               >
                 <el-form-item label="username" prop="pass">
                   <el-input
+                 
                     type="username"
                     v-model="loginForm.username"
                     autocomplete="off"
@@ -50,8 +52,8 @@
                   <router-link to="/register" tag="span">
                     <el-button>注册</el-button>
                   </router-link>
-                  <p>
-                    Forgot Your Password?
+                   <p>
+                     Forgot Your Password?
                     <a href="#">Click to Reset It</a>
                   </p>
                 </el-form-item>
@@ -63,7 +65,7 @@
           </el-col>
         </el-row>
       </el-main>
-      <el-footer>
+      <el-footer style="text-align:center;padding-left:70px">
         <p>Hello Guys ! (◕ᴗ◕✿)</p>
         <p>This is a test program for Javen</p>
       </el-footer>

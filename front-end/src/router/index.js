@@ -13,7 +13,7 @@ import Followers from '@/components/Followers'
 import Following from '@/components/Following'
 import Posts from '@/components/Posts'
 import UserPostsList from '@/components/UserPostsList'
-
+import Member from '@/components/Member'
 
 Vue.use(Router)
 
@@ -55,6 +55,7 @@ const router = new Router({
       name: 'Ping',
       component: Ping
     },
+
     {
       // 用户修改自己的个人信息
       path: '/edit-profile',
@@ -97,7 +98,6 @@ const router = new Router({
           name: 'Following',
           component: Following
         },
-
         // UserPosts will be rendered inside User's <router-view>
         // when /user/:id/posts is matched
         {
@@ -110,6 +110,7 @@ const router = new Router({
           name: 'UserPostsList',
           component: UserPostsList
         }
+
       ],
       meta: {
         requiresAuth: true

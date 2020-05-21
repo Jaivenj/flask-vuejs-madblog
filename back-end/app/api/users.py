@@ -1,5 +1,5 @@
 import re
-from flask import request, jsonify, url_for, g
+from flask import request, jsonify, url_for, g, current_app
 from app import db
 from app.api import bp
 from app.api.auth import token_auth
