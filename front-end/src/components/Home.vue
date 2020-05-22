@@ -2,12 +2,12 @@
   <div>
     <div style="padding:10px">
       <!--  博客列表数目详情 -->
-      <div slot="header" style="  background-color: #e9eef3;padding:15px 10px;">
+      <div slot="header" style="height:30px; background-color: #e9eef3; padding:10px 0px 0px 20px;">
         <span class="el-icon-document" style="float:left">
           <i>All Post</i>
           <small>(共{{ posts._meta.total_items }}篇, {{ posts._meta.total_pages }}页)</small>
         </span>
-        <el-dropdown style="float:right" trigger="click">
+        <el-dropdown style="float:right ;padding-right:30px" trigger="click">
           <span class="el-dropdown-link">
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>

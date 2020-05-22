@@ -11,9 +11,7 @@ import User from '@/components/User'
 import Overview from '@/components/Overview'
 import Followers from '@/components/Followers'
 import Following from '@/components/Following'
-import Posts from '@/components/Posts'
 import UserPostsList from '@/components/UserPostsList'
-import Member from '@/components/Member'
 
 Vue.use(Router)
 
@@ -100,11 +98,6 @@ const router = new Router({
         },
         // UserPosts will be rendered inside User's <router-view>
         // when /user/:id/posts is matched
-        {
-          path: 'posts',
-          name: 'Posts',
-          component: Posts
-        },
         {
           path: 'followeds-posts',
           name: 'UserPostsList',

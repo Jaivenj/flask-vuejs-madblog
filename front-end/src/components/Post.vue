@@ -9,7 +9,7 @@
               v-bind:to="{ path: `/user/${post.author.id}` }"
               v-bind:title="post.author.name || post.author.username"
             >
-              <div>
+              <div style="padding-top:20px ">
                 <el-avatar
                   shape="circle"
                   :size="70"
@@ -42,9 +42,9 @@
             <vue-markdown :source="post.summary" style="float:left;font-size:15px"></vue-markdown>
           </el-main>
 
-          <el-footer>
+          <el-footer >
             <div class="el-icon-view" style="padding-right:20px;width:40px">
-              <span style="padding-left:5px">1</span>
+              <span style="padding-left:5px">{{post.views}}</span>
             </div>
             <div class="el-icon-coffee-cup" style="padding-right:20px;width:40px">
               <span style="padding-left:5px">1</span>
@@ -104,14 +104,17 @@ export default {
   methods: {}
 };
 </script>
-<style>
+<style scoped>
 .Border {
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.2);
 }
 
 .Circle {
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 50px;
+  border-style: solid;
+  border-color: #eee;
+  padding: 1px;
 }
 
 .el-header,
@@ -124,7 +127,6 @@ export default {
 .el-aside {
   color: #333;
   text-align: right;
-  line-height: 0px;
   padding-right: 20px;
 }
 
@@ -132,6 +134,7 @@ export default {
   color: #333;
   text-align: left;
   line-height: 20px;
+  padding: 10px;
 }
 
 .quill-editor {

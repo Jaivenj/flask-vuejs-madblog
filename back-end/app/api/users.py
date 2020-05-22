@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from flask import request, jsonify, url_for, g, current_app
 from app import db
 from app.api import bp
@@ -46,7 +47,7 @@ def create_user():
 def get_users():
     '''返回用户集合，分页'''
     page = request.args.get('page', 1, type=int)
-    per_page = min(request.args.get('per_page', 10, type=int), 100)
+    per_page = min(request.args.get('per_page', current_app.config['USERS_PER_PAGE'],type=int), 100)
     data = User.to_collection_dict(User.query, page, per_page, 'api.get_users')
     return jsonify(data)
 

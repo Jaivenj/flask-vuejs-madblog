@@ -7,6 +7,7 @@ from hashlib import md5
 
 # 用于增删查改判断数据库的模块！
 
+
 class PaginatedAPIMixin(object):
     @staticmethod
     def to_collection_dict(query, page, per_page, endpoint, **kwargs):
@@ -90,9 +91,6 @@ class User(PaginatedAPIMixin, db.Model):
         # return followed.union(own).order_by(Post.timestamp.desc())
         return followed.order_by(Post.timestamp.desc())
 
-
-
-
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
@@ -116,6 +114,10 @@ class User(PaginatedAPIMixin, db.Model):
             'about_me': self.about_me,
             'member_since': self.member_since.isoformat() + 'Z',
             'last_seen': self.last_seen.isoformat() + 'Z',
+            'posts_count': self.posts.count(),
+            'followed_posts_count': self.followed_posts.count(),
+            'followeds_count': self.followeds.count(),
+            'followers_count': self.followers.count(),
             '_links': {
                 'self': url_for('api.get_user', id=self.id),
                 'avatar': self.avatar(128)
@@ -136,7 +138,7 @@ class User(PaginatedAPIMixin, db.Model):
         self.last_seen = datetime.utcnow()
         db.session.add(self)
 
-    def get_jwt(self, expires_in=3600):
+    def get_jwt(self, expires_in=36000):
         now = datetime.utcnow()
         payload = {
             'user_id': self.id,

@@ -185,7 +185,7 @@
       </el-container>
     </div>
 
-    <div ref="comment" id="comment">
+    <div >
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span style="float:left">Comments</span>
@@ -381,7 +381,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .BBorder {
   height: 1px;
   width: 100%;
