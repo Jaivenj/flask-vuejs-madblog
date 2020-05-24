@@ -140,9 +140,9 @@ export default {
           const name = JSON.parse(atob(response.data.token.split(".")[1])).name;
           this.$toasted.success(`Welcome ${name}!`, { icon: "fingerprint" });
           if (typeof this.$route.query.redirect == "undefined") {
-            this.$router.push("/");
+            this.$router.push("/").catch(err => {err});
           } else {
-            this.$router.push(this.$route.query.redirect);
+            this.$router.push(this.$route.query.redirect).catch(err => {err});
           }
         })
         .catch(error => {

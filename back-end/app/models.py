@@ -4,7 +4,7 @@ from flask import url_for, current_app
 from app import db
 from datetime import datetime, timedelta
 from hashlib import md5
-
+import base64
 # 用于增删查改判断数据库的模块！
 
 
@@ -120,7 +120,9 @@ class User(PaginatedAPIMixin, db.Model):
             'followers_count': self.followers.count(),
             '_links': {
                 'self': url_for('api.get_user', id=self.id),
-                'avatar': self.avatar(128)
+                'avatar': self.avatar(128),
+                'followeds': url_for('api.get_followeds', id=self.id),
+                'followers': url_for('api.get_followers', id=self.id) 
             }
         }
         if include_email:
@@ -138,11 +140,12 @@ class User(PaginatedAPIMixin, db.Model):
         self.last_seen = datetime.utcnow()
         db.session.add(self)
 
-    def get_jwt(self, expires_in=36000):
+    def get_jwt(self, expires_in=18000):
         now = datetime.utcnow()
         payload = {
             'user_id': self.id,
-            'name': self.name if self.name else self.username,
+            'user_name': self.name if self.name else self.username,
+            'user_avatar': base64.b64encode(self.avatar(24).encode('utf-8')).decode('utf-8'),
             'exp': now + timedelta(seconds=expires_in),
             'iat': now
         }

@@ -11,12 +11,8 @@
           <el-input :value="editForm.summary" v-model="editForm.summary"></el-input>
         </el-form-item>
         <el-form-item label="Body" label-width="120px">
-          <quill-editor
-            ref="myQuillEditor"
-            v-model="editForm.body"
-            :value="editForm.body"
-            @focus="onEditorFocus($event)"
-          ></quill-editor>
+          <quill-editor ref="myQuillEditor" v-model="editForm.body" :value="editForm.body"
+            @focus="onEditorFocus($event)"></quill-editor>
         </el-form-item>
       </el-form>
 
@@ -50,16 +46,16 @@
           </el-col>
           <el-col :span="1.5" class="grid-content">
             <div>
-              <router-link
-                v-bind:to="{ path: `/user/${post.author.id}` }"
-                style="color:#777;"
-              >{{post.author.username}}</router-link>
-                <el-divider direction="vertical"></el-divider>
+              <router-link v-bind:to="{ path: `/user/${post.author.id}` }" style="color:#777;">{{post.author.username}}
+              </router-link>
+              <el-divider direction="vertical"></el-divider>
             </div>
           </el-col>
           <el-col :span="1.5">
-            <div style="color:#777;  ">{{ $moment(post.timestamp).format('LLL') }}   <el-divider direction="vertical"></el-divider> </div>
-            
+            <div style="color:#777;  ">{{ $moment(post.timestamp).format('LLL') }} <el-divider direction="vertical">
+              </el-divider>
+            </div>
+
           </el-col>
 
           <el-col :span="1.5" class="grid-content">
@@ -185,18 +181,15 @@
       </el-container>
     </div>
 
-    <div >
+    <div>
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span style="float:left">Comments</span>
           <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
         </div>
         <div class="text item">
-          <quill-editor
-            ref="C_myQuillEditor"
-            style="height:150px;padding-bottom:50px"
-            @focus="onEditorFocus($event)"
-          ></quill-editor>
+          <quill-editor ref="C_myQuillEditor" style="height:150px;padding-bottom:50px" @focus="onEditorFocus($event)">
+          </quill-editor>
         </div>
         <div style="float:left;padding:20px">
           <el-button>Cancle</el-button>
@@ -208,247 +201,259 @@
 </template>
 
 <script>
-import { quillEditor } from "vue-quill-editor"; //调用编辑器
-import "quill/dist/quill.core.css";
-import "quill/dist/quill.snow.css";
-import "quill/dist/quill.bubble.css";
-import store from "../store";
-// 导入 vue-markdown 组件解析 markdown 原文为　HTML
-import VueMarkdown from "vue-markdown";
-export default {
-  name: "PostDetail",
-  components: {
-    VueMarkdown,
+  import {
     quillEditor
-  },
-  data() {
-    return {
-      focusStatus: false,
-      Author_ID: "",
-      sharedState: store.state,
-      dialogFormVisible: false,
-      post: {
-        author: { id: "", _links: { avatar: "" } },
-        body: "",
-        id: "",
-        summary: "",
-        title: "",
-        view: "",
-        _links: {}
-      },
-      str: "",
-      editForm: {
-        title: "",
-        summary: "",
-        body: "",
-        errors: 0, // 表单是否在前端验证通过，0 表示没有错误，验证通过
-        titleError: null,
-        bodyError: null
-      }
-    };
-  },
-  methods: {
-    onEditorFocus() {
-      this.$nextTick(function() {
-        // this.$refs.C_myQuillEditor.quill.enable(true);
-        // this.$refs.C_myQuillEditor.quill.blur();
-      });
-
-      console.log("object :>> ", this.editForm.body);
+  } from "vue-quill-editor"; //调用编辑器
+  import "quill/dist/quill.core.css";
+  import "quill/dist/quill.snow.css";
+  import "quill/dist/quill.bubble.css";
+  import store from "../store";
+  // 导入 vue-markdown 组件解析 markdown 原文为　HTML
+  import VueMarkdown from "vue-markdown";
+  export default {
+    name: "PostDetail",
+    components: {
+      VueMarkdown,
+      quillEditor
     },
-    OnEditorFocus() {
-      this.onEditorFocus();
-    },
-    Update_form() {
-      //   let loadingInstance = Loading.service("body");
-      //   console.log("loading", this.loading);
-      const path = `/posts/${this.editForm.id}`;
-      const payload = {
-        title: this.editForm.title,
-        summary: this.editForm.summary,
-        body: this.editForm.body
+    data() {
+      return {
+        focusStatus: false,
+        Author_ID: "",
+        sharedState: store.state,
+        dialogFormVisible: false,
+        post: {
+          author: {
+            id: "",
+            _links: {
+              avatar: ""
+            }
+          },
+          body: "",
+          id: "",
+          summary: "",
+          title: "",
+          view: "",
+          _links: {}
+        },
+        str: "",
+        editForm: {
+          title: "",
+          summary: "",
+          body: "",
+          errors: 0, // 表单是否在前端验证通过，0 表示没有错误，验证通过
+          titleError: null,
+          bodyError: null
+        }
       };
-      this.$axios
-        .put(path, payload)
-        .then(response => {
-          // handle success
-
-          this.getPost(this.editForm.id);
-          this.dialogFormVisible = false;
-
-          this.$toasted.success("Congratulations, you are posting a article !");
-          console.log("response :", response.data);
-          this.editForm.title = "";
-          this.editForm.summary = "";
-          this.editForm.body = "";
-          //   this.$nextTick(() => {
-          //     // 以服务的方式调用的 Loading 需要异步关闭
-          //     loadingInstance.close();
-          //   });
-        })
-        .catch(error => {
-          // handle error
-          console.log("error:", error);
+    },
+    methods: {
+      onEditorFocus() {
+        this.$nextTick(function () {
+          // this.$refs.C_myQuillEditor.quill.enable(true);
+          // this.$refs.C_myQuillEditor.quill.blur();
         });
-    },
-    onEditPost(post) {
-      this.dialogFormVisible = true;
-      // 不要使用对象引用赋值： this.editForm = post
-      // 这样是同一个 post 对象，用户在 editform 中的操作会双向绑定到该 post 上， 你会看到 modal 下面的博客也在变
-      // 如果用户修改了一些数据，但是点了 cancel，你就必须在 onResetUpdate() 中重新加载一次博客列表，不然用户会看到修改后但未提交的不对称信息
-      this.editForm = Object.assign({}, post);
-    },
-    onDeletePost(post) {
-      this.$confirm(
-        `此操作将永久删除文章《${this.post.title}》, 是否继续?`,
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-          showClose: true
-        }
-      )
-        .then(() => {
-          const path = `/posts/${this.post.id}`;
-          this.$axios
-            .delete(path)
-            .then(response => {
-              // handle success
-              this.$message({
-                type: "success",
-                message: "删除成功!"
-              });
-              if (typeof this.$route.query.redirect == "undefined") {
-                this.$router.push("/");
-              } else {
-                this.$router.push(this.$route.query.redirect);
-              }
-            })
-            .catch(error => {
-              // handle error
-              console.log(error.response.data);
-              this.$toasted.error(error.response.data.message, {
-                icon: "fingerprint"
-              });
-            });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
+
+        console.log("object :>> ", this.editForm.body);
+      },
+      OnEditorFocus() {
+        this.onEditorFocus();
+      },
+      Update_form() {
+        //   let loadingInstance = Loading.service("body");
+        //   console.log("loading", this.loading);
+        const path = `/posts/${this.editForm.id}`;
+        const payload = {
+          title: this.editForm.title,
+          summary: this.editForm.summary,
+          body: this.editForm.body
+        };
+        this.$axios
+          .put(path, payload)
+          .then(response => {
+            // handle success
+
+            this.getPost(this.editForm.id);
+            this.dialogFormVisible = false;
+
+            this.$toasted.success("Congratulations, you are posting a article !");
+            console.log("response :", response.data);
+            this.editForm.title = "";
+            this.editForm.summary = "";
+            this.editForm.body = "";
+            //   this.$nextTick(() => {
+            //     // 以服务的方式调用的 Loading 需要异步关闭
+            //     loadingInstance.close();
+            //   });
+          })
+          .catch(error => {
+            // handle error
+            console.log("error:", error);
           });
-        });
+      },
+      onEditPost(post) {
+        this.dialogFormVisible = true;
+        // 不要使用对象引用赋值： this.editForm = post
+        // 这样是同一个 post 对象，用户在 editform 中的操作会双向绑定到该 post 上， 你会看到 modal 下面的博客也在变
+        // 如果用户修改了一些数据，但是点了 cancel，你就必须在 onResetUpdate() 中重新加载一次博客列表，不然用户会看到修改后但未提交的不对称信息
+        this.editForm = Object.assign({}, post);
+      },
+      onDeletePost(post) {
+        this.$confirm(
+            `此操作将永久删除文章《${this.post.title}》, 是否继续?`,
+            "提示", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "warning",
+              showClose: true
+            }
+          )
+          .then(() => {
+            const path = `/posts/${this.post.id}`;
+            this.$axios
+              .delete(path)
+              .then(response => {
+                // handle success
+                this.$message({
+                  type: "success",
+                  message: "删除成功!"
+                });
+                if (typeof this.$route.query.redirect == "undefined") {
+                  this.$router.push("/").catch(err => {err});
+                } else {
+                  this.$router.push(this.$route.query.redirect).catch(err => {err});
+                }
+              })
+              .catch(error => {
+                // handle error
+                console.log(error.response.data);
+                this.$toasted.error(error.response.data.message, {
+                  icon: "fingerprint"
+                });
+              });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            });
+          });
+      },
+      escapeStringHTML(str) {
+        str = str.replace(/&lt;/g, "<");
+        str = str.replace(/&gt;/g, ">");
+        return str;
+      },
+      getPost(Author_ID) {
+        const path = `/posts/${Author_ID}`;
+        this.$axios
+          .get(path)
+          .then(response => {
+            this.post = response.data;
+            console.log("this.post :>> ", this.post);
+          })
+          .catch(error => {
+            // eslint-disable-next-line
+            console.error(error);
+          });
+      }
     },
-    escapeStringHTML(str) {
-      str = str.replace(/&lt;/g, "<");
-      str = str.replace(/&gt;/g, ">");
-      return str;
+    mounted() {},
+    created() {
+      const post_id = this.$route.params.id;
+      this.getPost(post_id);
     },
-    getPost(Author_ID) {
-      const path = `/posts/${Author_ID}`;
-      this.$axios
-        .get(path)
-        .then(response => {
-          this.post = response.data;
-          console.log("this.post :>> ", this.post);
-        })
-        .catch(error => {
-          // eslint-disable-next-line
-          console.error(error);
-        });
-    }
-  },
-  mounted() {},
-  created() {
-    const post_id = this.$route.params.id;
-    this.getPost(post_id);
-  },
-  beforeRouteUpdate(to, from, next) {
-    this.getPost(to.params.id);
-    console.log("to.params.id :>> ", to.params.id);
-    next();
-  },
-  directives: {
-    focus: {
-      inserted: function(el, { value }) {
-        if (value) {
-          el.focus();
+    beforeRouteUpdate(to, from, next) {
+
+      console.log("to.params.id :>> ", to.params.id);
+      next();
+      this.getPost(to.params.id);
+    },
+    directives: {
+      focus: {
+        inserted: function (el, {
+          value
+        }) {
+          if (value) {
+            el.focus();
+          }
         }
       }
     }
-  }
-};
+  };
+
 </script>
 
 <style scoped>
-.BBorder {
-  height: 1px;
-  width: 100%;
-  background: #eee;
-  margin: 20px auto;
-  text-align: center;
-}
+  .BBorder {
+    height: 1px;
+    width: 100%;
+    background: #eee;
+    margin: 20px auto;
+    text-align: center;
+  }
 
-.el-main {
-  color: #333;
-  text-align: left;
-}
+  .el-main {
+    color: #333;
+    text-align: left;
+  }
 
-.el-aside {
-  text-align: center;
-  line-height: 200px;
-}
+  .el-aside {
+    text-align: center;
+    line-height: 200px;
+  }
 
-.el-header,
-.el-footer {
-  color: #333;
-  text-align: center;
-  line-height: 40px;
-}
+  .el-header,
+  .el-footer {
+    color: #333;
+    text-align: center;
+    line-height: 40px;
+  }
 
-.el-col {
-  border-radius: 4px;
-}
+  .el-col {
+    border-radius: 4px;
+  }
 
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-}
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
 
-.text {
-  font-size: 14px;
-}
+  .text {
+    font-size: 14px;
+  }
 
-.item {
-  margin-bottom: 18px;
-}
+  .item {
+    margin-bottom: 18px;
+  }
 
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
 
-.clearfix:after {
-  clear: both;
-}
+  .clearfix:after {
+    clear: both;
+  }
 
-.box-card {
-  width: fit-content;
-  height: fit-content;
-  margin: 0 auto;
-}
+  .box-card {
+    width: fit-content;
+    height: fit-content;
+    margin: 0 auto;
+  }
 
-.C_BODER {
-  border-style: solid;
-  border-width: 1px;
-  border-color: #eee;
-  margin: 10 auto;
-}
-.BODYA {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
+  .C_BODER {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #eee;
+    margin: 10 auto;
+  }
+
+  .BODYA {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
 </style>

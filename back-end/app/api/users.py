@@ -5,7 +5,7 @@ from app import db
 from app.api import bp
 from app.api.auth import token_auth
 from app.api.errors import bad_request
-from app.models import User
+from app.models import User, Post
 
 
 @bp.route('/users', methods=['POST'])
@@ -212,4 +212,28 @@ def get_user_posts(id):
         user.posts.order_by(Post.timestamp.desc()), page, per_page,
         'api.get_user_posts', id=id)
     return jsonify(data)
+    
+@bp.route('/update-password', methods=['POST'])
+@token_auth.login_required
+def update_password():
+    '''已登录的用户更新自己的密码'''
+    data = request.get_json()
+    if not data:
+        return bad_request('You must post JSON data.')
+
+    if 'old_password' not in data or not data.get('old_password', None).strip():
+        return bad_request('Please provide a valid old password.')
+    if 'new_password' not in data or not data.get('new_password', None).strip():
+        return bad_request('Please provide a valid new password.')
+    if data.get('old_password') == data.get('new_password'):
+        return bad_request('The new password is equal to the old password.')
+    # 验证旧密码
+    if not g.current_user.check_password(data.get('old_password')):
+        return bad_request('The old password is wrong.')
+    g.current_user.set_password(data.get('new_password'))
+    db.session.commit()
+    return jsonify({
+        'status': 'success',
+        'message': 'Your password has been updated.'
+    })
 
