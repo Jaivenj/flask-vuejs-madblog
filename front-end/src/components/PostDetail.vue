@@ -54,12 +54,14 @@
                 v-bind:to="{ path: `/user/${post.author.id}` }"
                 style="color:#777;"
               >{{post.author.username}}</router-link>
-                <el-divider direction="vertical"></el-divider>
+              <el-divider direction="vertical"></el-divider>
             </div>
           </el-col>
           <el-col :span="1.5">
-            <div style="color:#777;  ">{{ $moment(post.timestamp).format('LLL') }}   <el-divider direction="vertical"></el-divider> </div>
-            
+            <div style="color:#777;  ">
+              {{ $moment(post.timestamp).format('LLL') }}
+              <el-divider direction="vertical"></el-divider>
+            </div>
           </el-col>
 
           <el-col :span="1.5" class="grid-content">
@@ -94,113 +96,185 @@
 
         <el-row style="padding-top:60px">
           <el-col :span="3">
-            <el-tooltip content="Top center" placement="top" effect="light">
-              <el-button type="primary" size="big" plain icon="el-icon-arrow-left">上一篇</el-button>
+            <el-tooltip :content="post.next_title||'无'" placement="top" effect="light">
+              <router-link
+                router-link
+                v-bind:to="{ name: 'PostDetail', params: { id: post.next_id || 0 } }"
+                href="#"
+              >
+                <el-button type="primary" size="big" plain icon="el-icon-arrow-left">上一篇</el-button>
+              </router-link>
             </el-tooltip>
           </el-col>
 
           <el-col :span="3" style="float:right">
-            <el-tooltip content="Top center" placement="top" effect="light">
-              <el-button type="primary" plain>
-                下一篇
-                <i class="el-icon-arrow-right el-icon--right"></i>
-              </el-button>
+            <el-tooltip :content="post.prev_title||'无'  " placement="top" effect="light">
+              <router-link
+                router-link
+                v-bind:to="{ name: 'PostDetail', params: { id: post.prev_id || 0 } }"
+                href="#"
+              >
+                <el-button type="primary" plain>
+                  下一篇
+                  <i class="el-icon-arrow-right el-icon--right"></i>
+                </el-button>
+              </router-link>
             </el-tooltip>
           </el-col>
         </el-row>
       </el-main>
     </el-container>
-    <div style="padding:5px">
-      <el-container id="profile" class="Container C_BODER">
-        <el-aside width="100px">
-          <div style="float:right;">
-            <el-avatar shape="circle" :size="60" v-bind:src="post.author._links.avatar"></el-avatar>
-          </div>
-        </el-aside>
-        <el-main>
-          <div id="Comments">
-            <div>
-              <h3>Cjaven</h3>
-            </div>
-            <div>2015年5月18日 22:22</div>
-            <div>
-              <p>
-                <font size="3">评论的挺好</font>
-              </p>
-            </div>
-            <div>
-              <el-row>
-                <el-col :span="2" class="el-icon-edit-outline">赞</el-col>
-                <el-col :span="2" class="el-icon-edit-outline">回复</el-col>
-                <el-col :span="2" style="float:right">
-                  <el-button type="danger" plain size="mini">删除</el-button>
-                </el-col>
-                <el-col :span="2" style="float:right">
-                  <el-button type="warning" plain size="mini">屏蔽</el-button>
-                </el-col>
-                <el-col :span="2" style="float:right">
-                  <el-button type="warning" plain size="mini">恢复</el-button>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-        </el-main>
-      </el-container>
-    </div>
-    <div style="padding:5px">
-      <el-container id="profile" class="Container C_BODER" style="width: 90%; float:right;">
-        <el-aside width="100px">
-          <div style="float:right;">
-            <el-avatar shape="circle" :size="60" v-bind:src="post.author._links.avatar"></el-avatar>
-          </div>
-        </el-aside>
-        <el-main>
-          <div id="Comments">
-            <div>
-              <h3>Cjaven</h3>
-            </div>
-            <div>2015年5月18日 22:22</div>
-            <div>
-              <p>
-                <font size="3">@Cjave 回复的不错</font>
-              </p>
-            </div>
-            <div>
-              <el-row>
-                <el-col :span="2" class="el-icon-edit-outline">赞</el-col>
-                <el-col :span="2" class="el-icon-edit-outline">回复</el-col>
-                <el-col :span="2" style="float:right">
-                  <el-button type="danger" plain size="mini">删除</el-button>
-                </el-col>
-                <el-col :span="2" style="float:right">
-                  <el-button type="warning" plain size="mini">屏蔽</el-button>
-                </el-col>
-                <el-col :span="2" style="float:right">
-                  <el-button type="warning" plain size="mini">恢复</el-button>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
-        </el-main>
-      </el-container>
+    <!-- ------------------------------------------------------------评论功能------------------------------------------------------------------------------------- -->
+    <!-- 评论 -->
+    <div v-if="comments">
+      <div v-for="(comment, index) in comments.items" v-bind:key="index">
+        <!-- 置顶评论 -->
+        <div style="padding:5px">
+          <el-container class="Container C_BODER">
+            <el-aside width="100px">
+              <div style="float:right;">
+                <el-avatar shape="circle" :size="60" v-bind:src="comment.author.avatar"></el-avatar>
+              </div>
+            </el-aside>
+            <el-main>
+              <div id="Comments">
+                <div>
+                  <template>
+                    <b>
+                      <font
+                        style="font-size:20px"
+                      >{{ comment.author.name || comment.author.username }}</font>
+                    </b>
+                    <el-tag
+                      type="danger"
+                      size="mini"
+                      v-if="comment.author.id == comment.post.author_id"
+                    >博文作者</el-tag>
+                  </template>
+                </div>
+                <template>
+                  <small>{{ $moment(comment.timestamp).format('YYYY年MM月DD日 HH:mm:ss') }}</small>
+                </template>
+                <div>
+                  <vue-markdown :source="comment.body"></vue-markdown>
+                </div>
+                <div style="padding-top:20px">
+                  <el-row>
+                    <a v-on:click="onLikeOrUnlike(comment)" href="#">
+                      <el-col :span="2" v-if="comment.likers_id.length > 0">
+                        <small style="color:red" class="el-icon-thumb"></small>
+                        <small>{{ comment.likers_id.length}}人赞</small>
+                      </el-col>
+
+                      <el-col :span="2" class="el-icon-thumb" v-else>
+                        <small>赞</small>
+                      </el-col>
+                    </a>
+                    <a v-on:click="onClickReply(child)" href="#" v-if="!comment.disabled">
+                      <el-col :span="2" class="el-icon-edit-outline">
+                        <small>回复</small>
+                      </el-col>
+                    </a>
+                    <el-col :span="2" style="float:right">
+                      <el-button type="danger" plain size="mini">删除</el-button>
+                    </el-col>
+                    <el-col :span="2" style="float:right">
+                      <el-button type="warning" plain size="mini">屏蔽</el-button>
+                    </el-col>
+                    <el-col :span="2" style="float:right">
+                      <el-button type="success" plain size="mini">恢复</el-button>
+                    </el-col>
+                  </el-row>
+                </div>
+              </div>
+            </el-main>
+          </el-container>
+
+          <el-footer height="fit-content" style="margin-bottom:60px" >
+            <template >
+              <el-input
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 4}"
+                placeholder="请输入回复"
+                v-model="textarea2"
+              ></el-input>
+              <el-button type="primary" plain  style="float:left">Sumbit</el-button>
+            </template>
+          </el-footer>
+        </div>
+        <!-- 子评论 -->
+        <!-- <div v-if="comment.descendants" style="padding:5px">
+          <el-container
+            id="profile"
+            v-for="(child, cindex) in comment.descendants"
+            v-bind:key="cindex"
+            class="Container C_BODER"
+            style="width: 90%; float:right;"
+          >
+            <el-aside width="100px">
+              <div style="float:right;">
+                <el-avatar shape="circle" :size="60" v-bind:src="post.author._links.avatar"></el-avatar>
+              </div>
+            </el-aside>
+            <el-main>
+              <div id="Comments">
+                <div>
+                  <h3>{{ child.author.name || child.author.username }}</h3>
+                </div>
+                <div>{{ $moment(child.timestamp).format('YYYY年MM月DD日 HH:mm:ss') }}</div>
+                <div>
+                  <vue-markdown :source="child.body"></vue-markdown>
+                </div>
+                <div>
+                  <el-row>
+                    <el-col :span="2" class="el-icon-edit-outline">赞</el-col>
+                    <el-col :span="2" class="el-icon-edit-outline">回复</el-col>
+                    <el-col :span="2" style="float:right">
+                      <el-button type="danger" plain size="mini">删除</el-button>
+                    </el-col>
+                    <el-col :span="2" style="float:right">
+                      <el-button type="warning" plain size="mini">屏蔽</el-button>
+                    </el-col>
+                    <el-col :span="2" style="float:right">
+                      <el-button type="success" plain size="mini">恢复</el-button>
+                    </el-col>
+                  </el-row>
+                </div>
+              </div>
+            </el-main>
+          </el-container>
+        </div>-->
+      </div>
+      <!-- 页码选择器 -->
+      <div v-if="comments && comments._meta.total_pages > 1">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="comments._meta.total_items "
+          :page-size="comments._meta.per_page"
+          style="padding:10px;text-align: right"
+          @current-change="Current_Change()"
+          :current-page.sync="Current_Page"
+        ></el-pagination>
+      </div>
     </div>
 
-    <div >
+    <div>
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span style="float:left">Comments</span>
-          <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
         </div>
         <div class="text item">
           <quill-editor
+            v-model="commentForm.body"
             ref="C_myQuillEditor"
             style="height:150px;padding-bottom:50px"
             @focus="onEditorFocus($event)"
           ></quill-editor>
         </div>
         <div style="float:left;padding:20px">
-          <el-button>Cancle</el-button>
-          <el-button>Sumbit</el-button>
+          <el-button @click="onResetAddComment">Cancle</el-button>
+          <el-button @click="onSubmitAddComment">Sumbit</el-button>
         </div>
       </el-card>
     </div>
@@ -223,12 +297,20 @@ export default {
   },
   data() {
     return {
-      focusStatus: false,
+      str: "",
+      comments: "",
       Author_ID: "",
+      focusStatus: false,
       sharedState: store.state,
       dialogFormVisible: false,
+      Current_Page: Number(this.$route.query.currentPage) || 1,
       post: {
-        author: { id: "", _links: { avatar: "" } },
+        author: {
+          id: "",
+          _links: {
+            avatar: ""
+          }
+        },
         body: "",
         id: "",
         summary: "",
@@ -236,13 +318,25 @@ export default {
         view: "",
         _links: {}
       },
-      str: "",
       editForm: {
         title: "",
         summary: "",
         body: "",
         errors: 0, // 表单是否在前端验证通过，0 表示没有错误，验证通过
         titleError: null,
+        bodyError: null
+      },
+      commentForm: {
+        body: "",
+        parent_id: "", // 被回复的评论的 id
+        author_id: "", // 被回复的评论的作者的 id
+        author_name: "", // 被回复的评论的作者的名字
+        errors: 0, // 表单是否在前端验证通过，0 表示没有错误，验证通过
+        bodyError: null
+      },
+      editCommentForm: {
+        body: "",
+        errors: 0, // 表单是否在前端验证通过，0 表示没有错误，验证通过
         bodyError: null
       }
     };
@@ -320,9 +414,13 @@ export default {
                 message: "删除成功!"
               });
               if (typeof this.$route.query.redirect == "undefined") {
-                this.$router.push("/");
+                this.$router.push("/").catch(err => {
+                  err;
+                });
               } else {
-                this.$router.push(this.$route.query.redirect);
+                this.$router.push(this.$route.query.redirect).catch(err => {
+                  err;
+                });
               }
             })
             .catch(error => {
@@ -351,23 +449,169 @@ export default {
         .get(path)
         .then(response => {
           this.post = response.data;
-          console.log("this.post :>> ", this.post);
+          console.log("数据 post:>> ", this.post);
         })
         .catch(error => {
           // eslint-disable-next-line
           console.error(error);
         });
+    },
+    getPostComments(id) {
+      let page = 1;
+      let per_page = 10;
+      if (typeof this.$route.query.page != "undefined") {
+        page = this.$route.query.page;
+      }
+      if (typeof this.$route.query.per_page != "undefined") {
+        per_page = this.$route.query.per_page;
+      }
+
+      const path = `/posts/${id}/comments/?page=${page}&per_page=${per_page}`;
+      this.$axios
+        .get(path)
+        .then(response => {
+          // handle success
+          this.comments = response.data;
+          console.log("数据 comments:>> ", this.comments);
+          //if (response.data._meta.total_items > 0) {
+          //  this.comments = response.data
+          //}
+        })
+        .catch(error => {
+          // handle error
+          console.error(error);
+        });
+    },
+    Current_Change() {
+      console.log("Current_Page :", this.Current_Page);
+      this.$router
+        .push({
+          path: this.$route.path,
+          query: {
+            page: this.Current_Page,
+            per_page: this.comments._meta.per_page
+          }
+        })
+        .catch(err => {
+          err;
+        });
+    },
+    onResetAddComment() {
+      this.commentForm.body = "";
+      this.commentForm.parent_id = "";
+      this.commentForm.author_id = "";
+      this.commentForm.author_name = "";
+      // 移除错误
+      this.commentForm.bodyError = null;
+    },
+    onSubmitAddComment(e) {
+      this.commentForm.errors = 0; // 重置
+      if (!this.commentForm.body) {
+        this.commentForm.errors++;
+        this.commentForm.bodyError = "Body is required.";
+      } else {
+        this.commentForm.bodyError = null;
+      }
+      if (this.commentForm.errors > 0) {
+        // 表单验证没通过时，不继续往下执行，即不会通过 axios 调用后端API
+        return false;
+      }
+      const path = "/comments/";
+      let payload = "";
+      if (this.commentForm.parent_id) {
+        // 说明是回复评论
+        const at_who = `<a href="/user/${this.commentForm.author_id}" class="g-text-underline--none--hover">@${this.commentForm.author_name} </a>`;
+        payload = {
+          body: at_who + this.commentForm.body,
+          post_id: this.$route.params.id,
+          parent_id: this.commentForm.parent_id
+        };
+      } else {
+        // 说明是发表一级评论
+        payload = {
+          body: this.commentForm.body,
+          post_id: this.$route.params.id
+        };
+      }
+      this.$axios
+        .post(path, payload)
+        .then(response => {
+          // handle success
+          this.getPostComments(this.$route.params.id);
+          this.$toasted.success("Successed add a new comment.", {
+            icon: "fingerprint"
+          });
+          this.onResetAddComment();
+        })
+        .catch(error => {
+          // handle error
+          console.log(error.response.data);
+          this.$toasted.error(error.response.data.message, {
+            icon: "fingerprint"
+          });
+        });
+    },
+    onLikeOrUnlike(comment) {
+      // 用户需要先登录
+      if (!this.sharedState.is_authenticated) {
+        this.$toasted.error("您需要先登录才能点赞 ...", {
+          icon: "fingerprint"
+        });
+        this.$router.replace({
+          path: "/login",
+          query: { redirect: this.$route.path + "#c" + comment.id }
+        });
+      }
+      let path = "";
+      if (comment.likers_id.indexOf(this.sharedState.user_id) != -1) {
+        // 当前登录用户已点过赞，再次点击则取消赞
+        path = `/comments/${comment.id}/unlike`;
+      } else {
+        path = `/comments/${comment.id}/like`;
+      }
+      this.$axios
+        .get(path)
+        .then(response => {
+          // handle success
+          this.getPostComments(this.$route.params.id);
+          this.$toasted.success(response.data.message, { icon: "fingerprint" });
+        })
+        .catch(error => {
+          // handle error
+          console.log(error.response.data);
+          this.$toasted.error(error.response.data.message, {
+            icon: "fingerprint"
+          });
+        });
+    },
+    onClickReply(comment) {
+      // 用户需要先登录
+      if (!this.sharedState.is_authenticated) {
+        this.$toasted.error("您需要先登录才能回复评论 ...", {
+          icon: "fingerprint"
+        });
+        this.$router.replace({
+          path: "/login",
+          query: { redirect: this.$route.path + "#c" + comment.id }
+        });
+      }
+      this.commentForm.parent_id = comment.id;
+      this.commentForm.author_id = comment.author.id;
+      this.commentForm.author_name =
+        comment.author.name || comment.author.username;
     }
   },
   mounted() {},
   created() {
     const post_id = this.$route.params.id;
+    this.getPostComments(post_id);
     this.getPost(post_id);
   },
   beforeRouteUpdate(to, from, next) {
-    this.getPost(to.params.id);
     console.log("to.params.id :>> ", to.params.id);
     next();
+    this.getPost(to.params.id);
+    this.getPostComments(to.params.id);
   },
   directives: {
     focus: {
@@ -397,7 +641,7 @@ export default {
 
 .el-aside {
   text-align: center;
-  line-height: 200px;
+  line-height: 150px;
 }
 
 .el-header,
@@ -405,6 +649,7 @@ export default {
   color: #333;
   text-align: center;
   line-height: 40px;
+  padding: 0px;
 }
 
 .el-col {
@@ -446,6 +691,7 @@ export default {
   border-color: #eee;
   margin: 10 auto;
 }
+
 .BODYA {
   position: relative;
   width: 100%;

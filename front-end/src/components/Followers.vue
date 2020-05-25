@@ -2,140 +2,170 @@
   <div>
     <!-- 页头 -->
     <div class="C_followers" v-if="followers">
-      <h4 style="padding-left:20px" class="el-icon-s-custom">User Followers(共{{followers._meta.total_items}}个，{{followers._meta.page}}页)</h4>
+      <h4 style="padding-left:20px" class="el-icon-s-custom">User
+        Followers(共{{followers._meta.total_items}}个，{{followers._meta.page}}页)</h4>
       <div style="float:right ;padding-right:30px">
         <el-dropdown trigger="click">
           <span class="el-dropdown-link">
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>每页 1 个</el-dropdown-item>
-            <el-dropdown-item>每页 5 个</el-dropdown-item>
-            <el-dropdown-item>每页 10 个</el-dropdown-item>
+            <router-link v-bind:to="{ path: $route.path, query: { page: 1, per_page: 1 }}">
+              <el-dropdown-item>每页 1 个</el-dropdown-item>
+            </router-link>
+            <router-link v-bind:to="{ path: $route.path, query: { page: 1, per_page: 5 }}">
+              <el-dropdown-item>每页 5 个</el-dropdown-item>
+            </router-link>
+            <router-link v-bind:to="{ path: $route.path, query: { page: 1, per_page: 10 }}">
+              <el-dropdown-item>每页 10 个</el-dropdown-item>
+            </router-link>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
     </div>
     <!-- Member成员 -->
     <div>
-      <Member
-        v-for="(follower, index) in followers.items"
-        v-bind:key="index"
-        v-on:follow-user="onFollowUser(follower)"
-        v-on:unfollow-user="onUnfollowUser(follower)"
-        v-bind:member="follower"
-      ></Member>
+      <Member v-for="(follower, index) in followers.items" v-bind:key="index" v-on:follow-user="onFollowUser(follower)"
+        v-on:unfollow-user="onUnfollowUser(follower)" v-bind:member="follower" v-on:change-Item="Change_Item()">
+      </Member>
     </div>
+    <el-pagination background layout="prev, pager, next" :total="followers._meta.total_items "
+      :page-size="followers._meta.per_page" style="padding:10px;text-align: right" @current-change="Current_Change()"
+      :current-page.sync="Current_Page"></el-pagination>
   </div>
 </template>
 
 <script>
-import Member from "./Member";
+  import Member from "./Member";
 
-export default {
-  name: "Followers",
-  components: {
-    Member
-  },
-  data() {
-    return {
-      user: "",
-      followers: ""
-    };
-  },
-  methods: {
-    getUser(id) {
-      const path = `/users/${id}`;
-      this.$axios
-        .get(path)
-        .then(response => {
-          // handle success
-          this.user = response.data;
-        })
-        .catch(error => {
-          // handle error
-          console.error(error);
-        });
-    },
-    getUserFollowers(id) {
-      let page = 1;
-      let per_page = 5;
-      if (typeof this.$route.query.page != "undefined") {
-        page = this.$route.query.page;
-      }
-      if (typeof this.$route.query.per_page != "undefined") {
-        per_page = this.$route.query.per_page;
-      }
+  export default {
+    name: "Followers",
 
-      const path = `users/${id}/followers/?page=${page}&per_page=${per_page}`;
-      this.$axios
-        .get(path)
-        .then(response => {
-          // handle success
-          this.followers = response.data;
-          console.log('this.followers :>> ', this.followers);
-        })
-        .catch(error => {
-          // handle error
-          console.error(error);
-        });
+    components: {
+      Member
     },
-    onFollowUser(follower) {
-      const path = `follow/${follower.id}`;
-      this.$axios
-        .get(path)
-        .then(response => {
-          // handle success
-          this.getUserFollowers(this.$route.params.id);
-        })
-        .catch(error => {
-          // handle error
-          console.error(error);
-        });
+    data() {
+      return {
+
+        Current_Page: Number(this.$route.query.currentPage) || 1,
+        user: "",
+        activeIndex:"",
+        followers: {
+          _meta: {
+            total_items: null
+          }
+        }
+      };
     },
-    onUnfollowUser(follower) {
-      const path = `unfollow/${follower.id}`;
-      this.$axios
-        .get(path)
-        .then(response => {
-          // handle success
-          this.getUserFollowers(this.$route.params.id);
-        })
-        .catch(error => {
-          // handle error
-          console.error(error);
-        });
+    methods: {
+      getUser(id) {
+        const path = `/users/${id}`;
+        this.$axios
+          .get(path)
+          .then(response => {
+            // handle success
+            this.user = response.data;
+          })
+          .catch(error => {
+            // handle error
+            console.error(error);
+          });
+      },
+      getUserFollowers(id) {
+        let page = 1;
+        let per_page = 5;
+        if (typeof this.$route.query.page != "undefined") {
+          page = this.$route.query.page;
+        }
+        if (typeof this.$route.query.per_page != "undefined") {
+          per_page = this.$route.query.per_page;
+        }
+
+        const path = `users/${id}/followers/?page=${page}&per_page=${per_page}`;
+        this.$axios
+          .get(path)
+          .then(response => {
+            // handle success
+            this.followers = response.data;
+            console.log('this.followers :>> ', this.followers);
+          })
+          .catch(error => {
+            // handle error
+            console.error(error);
+          });
+      },
+      onFollowUser(follower) {
+        const path = `follow/${follower.id}`;
+        this.$axios
+          .get(path)
+          .then(response => {
+            // handle success
+            this.getUserFollowers(this.$route.params.id);
+          })
+          .catch(error => {
+            // handle error
+            console.error(error);
+          });
+      },
+      onUnfollowUser(follower) {
+        const path = `unfollow/${follower.id}`;
+        this.$axios
+          .get(path)
+          .then(response => {
+            // handle success
+            this.getUserFollowers(this.$route.params.id);
+          })
+          .catch(error => {
+            // handle error
+            console.error(error);
+          });
+      },
+      Current_Change() {
+        console.log("Current_Page :", this.Current_Page);
+        this.$router.push({
+          path: this.$route.path,
+          query: {
+            page: this.Current_Page,
+            per_page: this.followers._meta.per_page
+          }
+        }).catch(err => {err});
+      },
+      Change_Item() {
+        console.log('点击头像跳转至用户');
+      }
+    },
+    created() {
+      const user_id = this.$route.params.id;
+      this.getUser(user_id);
+      this.getUserFollowers(user_id);
+    },
+    // 进入子路由后重新加载数据
+    beforeRouteUpdate(to, from, next) {
+      next();
+      this.getUser(to.params.id);
+      this.getUserFollowers(to.params.id);
     }
-  },
-  created() {
-    const user_id = this.$route.params.id;
-    this.getUser(user_id);
-    this.getUserFollowers(user_id);
-  },
-  // 进入子路由后重新加载数据
-  beforeRouteUpdate(to, from, next) {
-    next();
-    this.getUser(to.params.id);
-    this.getUserFollowers(to.params.id);
-  }
-};
+  };
+
 </script>
 
 <style scoped>
-.C_followers {
-  margin-bottom: 20px;
-  height: 60px;
-  width: 100%;
-  background-color: #eee;
-  font-size: 1rem;
-  line-height: 60px;
-  color: rgb(124, 120, 120);
-}
-.el-dropdown-link {
-  color: #409eff;
-}
+  .C_followers {
+    margin-bottom: 20px;
+    height: 60px;
+    width: 100%;
+    background-color: #eee;
+    font-size: 1rem;
+    line-height: 60px;
+    color: rgb(124, 120, 120);
+  }
 
-.el-icon-arrow-down {
-  font-size: 12px;
-}
+  .el-dropdown-link {
+    color: #409eff;
+  }
+
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
+
 </style>

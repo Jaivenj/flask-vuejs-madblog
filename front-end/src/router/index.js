@@ -3,15 +3,23 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Login from '@/components/Login'
 import Register from '@/components/Register'
-import Profile from '@/components/Profile'
 import EditProfile from '@/components/EditProfile'
 import Ping from '@/components/Ping'
 import PostDetail from '@/components/PostDetail'
+
 import User from '@/components/User'
 import Overview from '@/components/Overview'
 import Followers from '@/components/Followers'
 import Following from '@/components/Following'
 import UserPostsList from '@/components/UserPostsList'
+
+import Settings from '@/components/Settings'
+import Profile from '@/components/Profile'
+import Account from '@/components/Account'
+import Email from '@/components/Email'
+import Notification from '@/components/Notification'
+
+
 
 Vue.use(Router)
 
@@ -63,6 +71,7 @@ const router = new Router({
         requiresAuth: true
       }
     },
+
     {
       path: '/user/:id',
       name: 'User',
@@ -104,6 +113,38 @@ const router = new Router({
           component: UserPostsList
         }
 
+      ],
+      meta: {
+        requiresAuth: true
+      }
+    }, {
+      // 用户修改自己的个人信息
+      path: '/settings',
+      component: Settings,
+      children: [{
+          path: '',
+          component: Profile
+        },
+        {
+          path: 'profile',
+          name: 'SettingProfile',
+          component: Profile
+        },
+        {
+          path: 'account',
+          name: 'SettingAccount',
+          component: Account
+        },
+        {
+          path: 'email',
+          name: 'SettingEmail',
+          component: Email
+        },
+        {
+          path: 'notification',
+          name: 'SettingNotification',
+          component: Notification
+        }
       ],
       meta: {
         requiresAuth: true

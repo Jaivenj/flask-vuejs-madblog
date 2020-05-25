@@ -16,13 +16,31 @@ axios.interceptors.request.use(function (config) {
     return Promise.reject(error)
   })
 
+// 请求拦截器
+// Add a request interceptor
+axios.interceptors.request.use(function (config) {
+  // Do something before request is sent
+  const token = window.localStorage.getItem('madblog-token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+}, function (error) {
+  // Do something with request error
+  return Promise.reject(error)
+})
 
+// 响应拦截器
 // Add a response interceptor
 axios.interceptors.response.use(function (response) {
-    // Do something with response data
-    return response
-  }, function (error) {
-    // Do something with response error
+  // Do something with response data
+  return response
+}, function (error) {
+  // Do something with response error
+  if (typeof error.response == 'undefined') {
+    Vue.toasted.error('无法连接Flask API，请联系管理员', { icon: 'fingerprint' })
+  } else {
+    // 匹配不同的响应码
     switch  (error.response.status) {
       case 401:
         // 清除 Token 及 已认证 等状态
@@ -36,14 +54,25 @@ axios.interceptors.response.use(function (response) {
           })
         }
         break
-  
+
+      case 403:
+        Vue.toasted.error('403: Forbidden', { icon: 'fingerprint' })
+        router.back()
+        break
+
       case 404:
-        Vue.toasted.error('404: NOT FOUND', { icon: 'fingerprint' })
+        Vue.toasted.error('404: Not Found', { icon: 'fingerprint' })
+        router.back()
+        break
+      
+      case 500:  // 根本拿不到 500 错误，因为 CORs 不会过来
+        Vue.toasted.error('500: Oops... INTERNAL SERVER ERROR', { icon: 'fingerprint' })
         router.back()
         break
     }
-    return Promise.reject(error)
-  })
+  }
 
+  return Promise.reject(error)
+})
 
 export default axios

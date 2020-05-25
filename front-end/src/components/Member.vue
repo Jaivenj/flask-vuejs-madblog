@@ -2,8 +2,8 @@
   <div class="Member_div">
     <el-row :gutter="20" type="flex" align="middle">
       <el-col :span="2.3" :offset="1">
-        <router-link v-bind:to="{ path: `/user/${member.id}` }">
-          <el-avatar shape="circle" :size="60" :src="member._links.avatar" class="Member_Border"></el-avatar>
+        <router-link v-bind:to="{ path: `/user/${member.id}`,query:{Overview:'Overview'}}" >
+          <el-avatar @click.native="$emit('change-Item')"   shape="circle" :size="60" :src="member._links.avatar" class="Member_Border"></el-avatar>
         </router-link>
       </el-col>
       <el-col :span="2.5">
@@ -44,9 +44,15 @@ export default {
   props: ["member"],
   data() {
     return {
-      sharedState: store.state
+      sharedState: store.state,
+ 
     };
-  }
+  },
+  methods: {
+    A(){
+       console.log("点击头像");
+    }
+  },
 };
 </script>
 <style scoped>
